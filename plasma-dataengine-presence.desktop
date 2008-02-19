@@ -1,0 +1,9 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=Presence Data Engine
+Comment=Decibel Presence Data Engine
+ServiceTypes=Plasma/DataEngine
+Type=Service
+Icon=application-decibel
+X-KDE-Library=plasma_engine_presence
+X-Plasma-EngineName=presence
