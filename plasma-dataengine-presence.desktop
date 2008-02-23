@@ -1,7 +1,9 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=Presence Data Engine
+Name[sv]=Datagränssnitt för närvaro
 Comment=Decibel Presence Data Engine
+Comment[sv]=Decibel datagränssnitt för närvaro
 ServiceTypes=Plasma/DataEngine
 Type=Service
 Icon=application-decibel
