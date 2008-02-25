@@ -31,9 +31,8 @@
 #include <Decibel/Types>
 
 PresenceEngine::PresenceEngine(QObject* parent, const QVariantList& args)
-    : Plasma::DataEngine(parent)
+    : Plasma::DataEngine(parent, args)
 {
-    Q_UNUSED(args)
     // Register custom types:
     Decibel::registerTypes();
 }
