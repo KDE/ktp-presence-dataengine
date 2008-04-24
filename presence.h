@@ -34,7 +34,7 @@ class PresenceEngine : public Plasma::DataEngine
 
     protected:
         void init();
-        bool sourceRequested(const QString &name);
+        bool sourceRequestEvent(const QString &name);
 
     private slots:
         void accountCreated(const uint handle);

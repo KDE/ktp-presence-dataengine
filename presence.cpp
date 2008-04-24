@@ -92,7 +92,7 @@ void PresenceEngine::init()
     }
 }
 
-bool PresenceEngine::sourceRequested(const QString &name)
+bool PresenceEngine::sourceRequestEvent(const QString &name)
 {
     /*
      * if the visualisation requests a
