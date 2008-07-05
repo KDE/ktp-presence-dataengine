@@ -18,6 +18,8 @@
 
 #include "presence.h"
 
+#include <QtTapioca/PresenceState>
+
 #include <QDateTime>
 #include <QTimer>
 #include <QtDBus/QDBusConnection>
@@ -26,6 +28,7 @@
 #include <KLocale>
 #include <KUrl>
 
+#include <Decibel/AccountData>
 #include <Decibel/AccountManager>
 #include <Decibel/DBusNames>
 #include <Decibel/Types>
@@ -107,22 +110,10 @@ bool PresenceEngine::sourceRequestEvent(const QString &name)
 void PresenceEngine::accountCreated(const uint handle)
 {
     kDebug() << "accountCreated() called";
-    /*
-     * slot called when a new account is
-     * created.
-     *
-     * we should get the data for that
-     * account from decibel and then
-     * setData with it.
-     */
-    QString source;
-    source.setNum(handle);
-    QVariantMap accountData = m_accountManager->queryAccount(handle);
-    QMap<QString, QVariant>::const_iterator end( accountData.constEnd() );
-    for ( QMap<QString, QVariant>::const_iterator itr( accountData.constBegin() ); itr != end; ++itr )
-    {
-        setData(source, itr.key(), itr.value());
-    }
+    // Load the data for the new account. To avoid duplicating code, we treat
+    // this just as if an account was updated, and call the method to handle
+    // that.
+    accountUpdated(handle);
 }
 
 void PresenceEngine::accountUpdated(const uint handle)
@@ -138,7 +129,18 @@ void PresenceEngine::accountUpdated(const uint handle)
     QMap<QString, QVariant>::const_iterator end( accountData.constEnd() );
     for ( QMap<QString, QVariant>::const_iterator itr( accountData.constBegin() ); itr != end; ++itr )
     {
-        setData(source, itr.key(), itr.value());
+        if(itr.key() == Decibel::name_current_presence)
+        {
+            QtTapioca::PresenceState ps = qdbus_cast<QtTapioca::PresenceState>(itr.value().value<QDBusArgument>());
+            QVariant psv;
+            psv.setValue(ps);
+            setData(source, "current_presence", psv);
+            continue;
+        }
+        else if(itr.key() == Decibel::name_presence_parameters)
+        {
+            setData(source, "status_message", itr.value().toMap().value("status_message").toString());
+        }
     }
 }
 
