@@ -42,7 +42,7 @@ class PresenceEngine : public Plasma::DataEngine
         void accountDeleted(const uint handle);
 
     private:
-        de::basyskom::Decibel::AccountManager *m_accountManager;
+        org::kde::Decibel::AccountManager *m_accountManager;
 };
 
 K_EXPORT_PLASMA_DATAENGINE(presence, PresenceEngine)

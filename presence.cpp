@@ -58,7 +58,7 @@ void PresenceEngine::init()
     * which will provide all the data to this
     * data engine.
     */
-    m_accountManager = new de::basyskom::Decibel::AccountManager
+    m_accountManager = new org::kde::Decibel::AccountManager
                                 (Decibel::daemon_service,
                                  Decibel::daemon_accountmanager_path,
                                  QDBusConnection::sessionBus());
@@ -100,7 +100,7 @@ bool PresenceEngine::sourceRequestEvent(const QString &name)
      * then it doesn't exist, so return
      * false
      */
-
+    Q_UNUSED(name);
     return false;
 }
 
