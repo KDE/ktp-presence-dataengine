@@ -19,7 +19,6 @@
 #include "presence.h"
 
 #include <Decibel/AccountData>
-#include <Decibel/AccountManager>
 #include <Decibel/DBusNames>
 #include <Decibel/Types>
 

@@ -21,13 +21,7 @@
 
 #include <plasma/dataengine.h>
 
-namespace org{
-namespace kde{
-namespace Decibel{
-    class AccountManager;
-}
-}
-}
+#include <Decibel/AccountManager>
 
 class PresenceEngine : public Plasma::DataEngine
 {
