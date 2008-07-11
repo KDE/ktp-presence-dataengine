@@ -8,7 +8,7 @@
  *   This program is distributed in the hope that it will be useful,
  *   but WITHOUT ANY WARRANTY; without even the implied warranty of
  *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *   GNU General Public License for more details
+ *   GNU Library General Public License for more details
  *
  *   You should have received a copy of the GNU Library General Public
  *   License along with this program; if not, write to the
@@ -18,23 +18,24 @@
 
 #include "presence.h"
 
-#include <QtTapioca/PresenceState>
-
-#include <QDateTime>
-#include <QTimer>
-#include <QtDBus/QDBusConnection>
-
-#include <KDebug>
-#include <KLocale>
-#include <KUrl>
-
 #include <Decibel/AccountData>
 #include <Decibel/AccountManager>
 #include <Decibel/DBusNames>
 #include <Decibel/Types>
 
-PresenceEngine::PresenceEngine(QObject* parent, const QVariantList& args)
-    : Plasma::DataEngine(parent, args)
+#include <KDebug>
+#include <KLocale>
+#include <KUrl>
+
+#include <QtTapioca/PresenceState>
+
+#include <QtCore/QDateTime>
+#include <QtCore/QTimer>
+
+#include <QtDBus/QDBusConnection>
+
+PresenceEngine::PresenceEngine(QObject * parent, const QVariantList & args)
+  : Plasma::DataEngine(parent, args)
 {
     // Register custom types:
     Decibel::registerTypes();
@@ -44,7 +45,8 @@ PresenceEngine::~PresenceEngine()
 {
 }
 
-void PresenceEngine::init()
+void
+PresenceEngine::init()
 {
     kDebug() << "init() started";
     /*
@@ -80,9 +82,12 @@ void PresenceEngine::init()
      * that if another is created while we are
      * processing them, we don't miss out on it.
      */
-    connect(m_accountManager, SIGNAL(accountCreated(const uint)), this, SLOT(accountCreated(const uint)));
-    connect(m_accountManager, SIGNAL(accountUpdated(const uint)), this, SLOT(accountUpdated(const uint)));
-    connect(m_accountManager, SIGNAL(accountDeleted(const uint)), this, SLOT(accountDeleted(const uint)));
+    connect(m_accountManager, SIGNAL(accountCreated(const uint)),
+            this, SLOT(accountCreated(const uint)));
+    connect(m_accountManager, SIGNAL(accountUpdated(const uint)),
+            this, SLOT(accountUpdated(const uint)));
+    connect(m_accountManager, SIGNAL(accountDeleted(const uint)),
+            this, SLOT(accountDeleted(const uint)));
 
     /*
      * create a datasource for each
@@ -95,7 +100,8 @@ void PresenceEngine::init()
     }
 }
 
-bool PresenceEngine::sourceRequestEvent(const QString &name)
+bool
+PresenceEngine::sourceRequestEvent(const QString & name)
 {
     /*
      * if the visualisation requests a
@@ -107,7 +113,8 @@ bool PresenceEngine::sourceRequestEvent(const QString &name)
     return false;
 }
 
-void PresenceEngine::accountCreated(const uint handle)
+void
+PresenceEngine::accountCreated(const uint handle)
 {
     kDebug() << "accountCreated() called";
     // Load the data for the new account. To avoid duplicating code, we treat
@@ -116,7 +123,8 @@ void PresenceEngine::accountCreated(const uint handle)
     accountUpdated(handle);
 }
 
-void PresenceEngine::accountUpdated(const uint handle)
+void
+PresenceEngine::accountUpdated(const uint handle)
 {
     kDebug() << "accountUpdated() called";
     /*
@@ -127,7 +135,7 @@ void PresenceEngine::accountUpdated(const uint handle)
     source.setNum(handle);
     QVariantMap accountData = m_accountManager->queryAccount(handle);
     QMap<QString, QVariant>::const_iterator end( accountData.constEnd() );
-    for ( QMap<QString, QVariant>::const_iterator itr( accountData.constBegin() ); itr != end; ++itr )
+    for(QMap<QString, QVariant>::const_iterator itr(accountData.constBegin()); itr != end; ++itr)
     {
         if(itr.key() == Decibel::name_current_presence)
         {
@@ -144,7 +152,8 @@ void PresenceEngine::accountUpdated(const uint handle)
     }
 }
 
-void PresenceEngine::accountDeleted(const uint handle)
+void
+PresenceEngine::accountDeleted(const uint handle)
 {
     kDebug() << "accountDeleted() called";
     /*
@@ -159,3 +168,4 @@ void PresenceEngine::accountDeleted(const uint handle)
 
 
 #include "presence.moc"
+
