@@ -1,6 +1,6 @@
 [Desktop Entry]
 Encoding=UTF-8
-Name=Presence Data Engine
+Name=Presence
 Name[et]=Kohaloleku andmete mootor
 Name[sv]=Datagränssnitt för närvaro
 Comment=Decibel Presence Data Engine
@@ -10,4 +10,10 @@ ServiceTypes=Plasma/DataEngine
 Type=Service
 Icon=application-decibel
 X-KDE-Library=plasma_engine_presence
-X-Plasma-EngineName=presence
+
+X-KDE-PluginInfo-Author=
+X-KDE-PluginInfo-Email=
+X-KDE-PluginInfo-Name=presence
+X-KDE-PluginInfo-Version=
+X-KDE-PluginInfo-Website=
+X-KDE-PluginInfo-Category=
