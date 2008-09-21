@@ -1,27 +1,10 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=Presence
-Name[el]=Παρουσία
-Name[fr]=Présence
-Name[gl]=Presenza
-Name[km]=បង្ហាញ
-Name[pt]=Presença
-Name[pt_BR]=Presença
 Name[sv]=Närvaro
-Name[uk]=Присутність
 Comment=Decibel Presence Data Engine
-Comment[el]=Μηχανή δεδομένων παρουσίας του Decibel
-Comment[es]=Motor de datos de Decibel Presence
 Comment[et]=Decibeli kohaloleku andmete mootor
-Comment[fr]=Moteur de données Présence pour Decibel
-Comment[ga]=Inneall Sonraí Decibel Presence
-Comment[gl]=Motor de dados de presenza en Decibel
-Comment[km]=ម៉ាស៊ីន​ទិន្នន័យ Decibel Presence
-Comment[pt]=Motor de Dados de Presença do Decibel
-Comment[pt_BR]=Mecanismo de Dados de Presença do Decibel
 Comment[sv]=Decibel datagränssnitt för närvaro
-Comment[uk]=Рушій даних присутності для Децибел
-Comment[x-test]=xxDecibel Presence Data Enginexx
 ServiceTypes=Plasma/DataEngine
 Type=Service
 Icon=application-decibel
