@@ -30,13 +30,54 @@
 
 class PresenceEngine::PresenceEnginePrivate
 {
+	PresenceEngine *parent;
 public:
+	PresenceEnginePrivate(PresenceEngine *p) : parent(p) {}
+	
 	Telepathy::Client::AccountManager * m_accountManager;
+	
+	void createAccountDataSource(Telepathy::Client::Account *account)
+	{
+		// \brief: todo
+/*
+			QString source;
+		    source.setNum(handle);
+		    QVariantMap accountData = m_accountManager->queryAccount(handle);
+		    QMap<QString, QVariant>::const_iterator end( accountData.constEnd() );
+		    for(QMap<QString, QVariant>::const_iterator itr(accountData.constBegin()); itr != end; ++itr)
+		    {
+		        if(itr.key() == Decibel::name_current_presence)
+		        {
+		            QtTapioca::PresenceState ps = qdbus_cast<QtTapioca::PresenceState>(itr.value().value<QDBusArgument>());
+		            QVariant psv;
+		            psv.setValue(ps);
+		            setData(source, "current_presence", psv);
+		            continue;
+		        }
+		        else if(itr.key() == Decibel::name_presence_parameters)
+		        {
+		            setData(source, "status_message", itr.value().toMap().value("status_message").toString());
+		        }
+		    }
+		
+		emit parent->sourceAdded(account->uniqueIdentifier());
+*/
+	}
+	
+	void removeAccountDataSource(Telepathy::Client::Account *account)
+	{
+		// \brief: todo
+/*
+		QString identifier = account->uniqueIdentifier();
+		parent->removeSource(identifier);
+		emit parent->sourceRemoved(identifier);
+*/
+	}
 };
 
 PresenceEngine::PresenceEngine(QObject * parent, const QVariantList & args)
   : Plasma::DataEngine(parent, args),
-  d(new PresenceEnginePrivate())
+  d(new PresenceEnginePrivate(this))
 {
     // Register custom types:
     Telepathy::registerTypes();
@@ -97,7 +138,7 @@ PresenceEngine::init()
      */
     foreach(Telepathy::Client::Account *account, accounts)
     {
-        //accountCreated(account);
+        d->createAccountDataSource(account);
     }
 }
 
@@ -121,7 +162,8 @@ PresenceEngine::accountCreated(const QDBusObjectPath &path)
     // Load the data for the new account. To avoid duplicating code, we treat
     // this just as if an account was updated, and call the method to handle
     // that.
-    accountValidityChanged(path, true);
+    Telepathy::Client::Account *account = d->m_accountManager->accountForPath(path);
+    d->createAccountDataSource(account);
 }
 
 void
@@ -132,25 +174,8 @@ PresenceEngine::accountValidityChanged(const QDBusObjectPath &path, bool valid)
      * slot called when an account has
      * been updated.
      */
-/*    QString source;
-    source.setNum(handle);
-    QVariantMap accountData = m_accountManager->queryAccount(handle);
-    QMap<QString, QVariant>::const_iterator end( accountData.constEnd() );
-    for(QMap<QString, QVariant>::const_iterator itr(accountData.constBegin()); itr != end; ++itr)
-    {
-        if(itr.key() == Decibel::name_current_presence)
-        {
-            QtTapioca::PresenceState ps = qdbus_cast<QtTapioca::PresenceState>(itr.value().value<QDBusArgument>());
-            QVariant psv;
-            psv.setValue(ps);
-            setData(source, "current_presence", psv);
-            continue;
-        }
-        else if(itr.key() == Decibel::name_presence_parameters)
-        {
-            setData(source, "status_message", itr.value().toMap().value("status_message").toString());
-        }
-    }*/
+    Telepathy::Client::Account *account = d->m_accountManager->accountForPath(path);
+    d->createAccountDataSource(account);
 }
 
 void
@@ -162,13 +187,9 @@ PresenceEngine::accountRemoved(const QDBusObjectPath &path)
      *
      * remove that source.
      */
-/*
-    QString source;
-    source.setNum(handle);
-    removeSource(source);
-*/
+    Telepathy::Client::Account *account = d->m_accountManager->accountForPath(path);
+    d->removeAccountDataSource(account);
 }
-
 
 #include "presence.moc"
 
