@@ -21,7 +21,7 @@
 
 #include <plasma/dataengine.h>
 
-#include <Decibel/AccountManager>
+class QDBusObjectPath;
 
 class PresenceEngine : public Plasma::DataEngine
 {
@@ -35,14 +35,14 @@ protected:
     void init();
     bool sourceRequestEvent(const QString & name);
 
-private slots:
-    void accountCreated(const uint handle);
-    void accountDeleted(const uint handle);
-    void accountUpdated(const uint handle);
+private Q_SLOTS:
+    void accountCreated(const QDBusObjectPath &path);
+    void accountRemoved(const QDBusObjectPath &path);
+    void accountValidityChanged(const QDBusObjectPath &path, bool valid);
 
 private:
-    org::kde::Decibel::AccountManager * m_accountManager;
-
+	class PresenceEnginePrivate;
+	PresenceEnginePrivate * const d;
 };
 
 K_EXPORT_PLASMA_DATAENGINE(presence, PresenceEngine)

@@ -18,30 +18,34 @@
 
 #include "presence.h"
 
-#include <Decibel/AccountData>
-#include <Decibel/DBusNames>
-#include <Decibel/Types>
+#include <TelepathyQt4/Client/Account>
+#include <TelepathyQt4/Client/AccountManager>
 
 #include <KDebug>
 #include <KLocale>
 #include <KUrl>
 
-#include <QtTapioca/PresenceState>
-
 #include <QtCore/QDateTime>
 #include <QtCore/QTimer>
 
-#include <QtDBus/QDBusConnection>
+class PresenceEngine::PresenceEnginePrivate
+{
+public:
+	Telepathy::Client::AccountManager * m_accountManager;
+};
 
 PresenceEngine::PresenceEngine(QObject * parent, const QVariantList & args)
-  : Plasma::DataEngine(parent, args)
+  : Plasma::DataEngine(parent, args),
+  d(new PresenceEnginePrivate())
 {
     // Register custom types:
-    Decibel::registerTypes();
+    Telepathy::registerTypes();
 }
 
 PresenceEngine::~PresenceEngine()
 {
+	delete d->m_accountManager;
+	delete d;
 }
 
 void
@@ -62,15 +66,14 @@ PresenceEngine::init()
     * which will provide all the data to this
     * data engine.
     */
-    m_accountManager = new org::kde::Decibel::AccountManager
-                                (Decibel::daemon_service,
-                                 Decibel::daemon_accountmanager_path,
-                                 QDBusConnection::sessionBus());
+    d->m_accountManager = 
+    	new Telepathy::Client::AccountManager(QDBusConnection::sessionBus());
+    
     /*
      * get a list of all the accounts that
      * are all ready there
      */
-    QList<uint> accounts = m_accountManager->listAccounts();
+    QList<Telepathy::Client::Account *> accounts = d->m_accountManager->allAccounts();
 
     /*
      * connect signals from the account manager
@@ -81,21 +84,20 @@ PresenceEngine::init()
      * that if another is created while we are
      * processing them, we don't miss out on it.
      */
-    connect(m_accountManager, SIGNAL(accountCreated(const uint)),
-            this, SLOT(accountCreated(const uint)));
-    connect(m_accountManager, SIGNAL(accountUpdated(const uint)),
-            this, SLOT(accountUpdated(const uint)));
-    connect(m_accountManager, SIGNAL(accountDeleted(const uint)),
-            this, SLOT(accountDeleted(const uint)));
+    connect(d->m_accountManager, SIGNAL(accountCreated(const QDBusObjectPath &)),
+            this, SLOT(accountCreated(const QDBusObjectPath &)));
+    connect(d->m_accountManager, SIGNAL(accountValidityChanged(const QDBusObjectPath &, bool)),
+            this, SLOT(accountValidityChanged(const QDBusObjectPath &, bool)));
+    connect(d->m_accountManager, SIGNAL(accountRemoved(const QDBusObjectPath &)),
+            this, SLOT(accountRemoved(const QDBusObjectPath &)));
 
     /*
      * create a datasource for each
      * of the accounts we got in the list.
      */
-    uint handle;
-    foreach(handle, accounts)
+    foreach(Telepathy::Client::Account *account, accounts)
     {
-        accountCreated(handle);
+        //accountCreated(account);
     }
 }
 
@@ -113,24 +115,24 @@ PresenceEngine::sourceRequestEvent(const QString & name)
 }
 
 void
-PresenceEngine::accountCreated(const uint handle)
+PresenceEngine::accountCreated(const QDBusObjectPath &path)
 {
     kDebug() << "accountCreated() called";
     // Load the data for the new account. To avoid duplicating code, we treat
     // this just as if an account was updated, and call the method to handle
     // that.
-    accountUpdated(handle);
+    accountValidityChanged(path, true);
 }
 
 void
-PresenceEngine::accountUpdated(const uint handle)
+PresenceEngine::accountValidityChanged(const QDBusObjectPath &path, bool valid)
 {
-    kDebug() << "accountUpdated() called";
+    kDebug() << "accountValidityChanged() called";
     /*
      * slot called when an account has
      * been updated.
      */
-    QString source;
+/*    QString source;
     source.setNum(handle);
     QVariantMap accountData = m_accountManager->queryAccount(handle);
     QMap<QString, QVariant>::const_iterator end( accountData.constEnd() );
@@ -148,21 +150,23 @@ PresenceEngine::accountUpdated(const uint handle)
         {
             setData(source, "status_message", itr.value().toMap().value("status_message").toString());
         }
-    }
+    }*/
 }
 
 void
-PresenceEngine::accountDeleted(const uint handle)
+PresenceEngine::accountRemoved(const QDBusObjectPath &path)
 {
-    kDebug() << "accountDeleted() called";
+    kDebug() << "uint handle() called";
     /*
      * slot called when an account has been deleted
      *
      * remove that source.
      */
+/*
     QString source;
     source.setNum(handle);
     removeSource(source);
+*/
 }
 
 
