@@ -100,6 +100,20 @@ public:
 	}
 };
 
+/**
+ * \class PresenceEngine
+ * \ingroup presence
+ * \headerfile <presence.h>
+ *
+ * Object representing a Presence data source.
+ */
+
+/**
+ * Construct a new PresenceEngine object.
+ *
+ * \param parent Object parent.
+ * \param args QVariantList arguments.
+ */
 PresenceEngine::PresenceEngine(QObject * parent, const QVariantList & args)
   : Plasma::DataEngine(parent, args),
   d(new PresenceEnginePrivate(this))
@@ -108,14 +122,19 @@ PresenceEngine::PresenceEngine(QObject * parent, const QVariantList & args)
     Telepathy::registerTypes();
 }
 
+/**
+ * Class destructor
+ */
 PresenceEngine::~PresenceEngine()
 {
 	delete d->m_accountManager;
 	delete d;
 }
 
-void
-PresenceEngine::init()
+/**
+ * Initialize Presence.
+ */
+void PresenceEngine::init()
 {
     kDebug() << "init() started";
     /*
@@ -169,8 +188,12 @@ PresenceEngine::init()
     }
 }
 
-bool
-PresenceEngine::sourceRequestEvent(const QString & name)
+/**
+ * Return whether source exist.
+ * 
+ * \return \c true if source exists.
+ */
+bool PresenceEngine::sourceRequestEvent(const QString & name)
 {
     /*
      * if the visualisation requests a
@@ -182,8 +205,12 @@ PresenceEngine::sourceRequestEvent(const QString & name)
     return false;
 }
 
-void
-PresenceEngine::accountCreated(const QDBusObjectPath &path)
+/**
+ *  Slot for new account.
+ * 
+ * \param path QDBusObjectPath to created account.
+ */
+void PresenceEngine::accountCreated(const QDBusObjectPath &path)
 {
     kDebug() << "accountCreated() called";
     // Load the data for the new account. To avoid duplicating code, we treat
@@ -192,8 +219,13 @@ PresenceEngine::accountCreated(const QDBusObjectPath &path)
     d->createAccountDataSource(path);
 }
 
-void
-PresenceEngine::accountValidityChanged(const QDBusObjectPath &path, bool valid)
+/**
+ * Slot for account data changed.
+ * 
+ * \param QDBusObjectPath Name of the account path.
+ * \param valid true if the account is valid.
+ */
+void PresenceEngine::accountValidityChanged(const QDBusObjectPath &path, bool valid)
 {
 	Q_UNUSED(valid);
     kDebug() << "accountValidityChanged() called";
@@ -204,8 +236,12 @@ PresenceEngine::accountValidityChanged(const QDBusObjectPath &path, bool valid)
     d->createAccountDataSource(path);
 }
 
-void
-PresenceEngine::accountRemoved(const QDBusObjectPath &path)
+/**
+ * Slot for account removed.
+ * 
+ * \param QDBusObjectPath Name of the account path.
+ */
+void PresenceEngine::accountRemoved(const QDBusObjectPath &path)
 {
     kDebug() << "uint handle() called";
     /*
