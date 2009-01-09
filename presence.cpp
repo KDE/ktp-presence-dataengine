@@ -38,6 +38,7 @@ public:
 	
 	void createAccountDataSource(Telepathy::Client::Account *account)
 	{
+		kDebug() << "createAccountDataSource called";
 		// \brief: todo
 /*
 			QString source;
@@ -66,6 +67,7 @@ public:
 	
 	void removeAccountDataSource(Telepathy::Client::Account *account)
 	{
+		kDebug() << "removeAccountDataSource called";
 		// \brief: todo
 /*
 		QString identifier = account->uniqueIdentifier();
@@ -115,7 +117,7 @@ PresenceEngine::init()
      * are all ready there
      */
     QList<Telepathy::Client::Account *> accounts = d->m_accountManager->allAccounts();
-
+    kDebug() << "accounts: " << accounts.size();
     /*
      * connect signals from the account manager
      * to slots within this data engine.
