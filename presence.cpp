@@ -120,6 +120,7 @@ PresenceEngine::PresenceEngine(QObject * parent, const QVariantList & args)
 {
     // Register custom types:
     Telepathy::registerTypes();
+    setIcon(QString());
 }
 
 /**
@@ -127,7 +128,8 @@ PresenceEngine::PresenceEngine(QObject * parent, const QVariantList & args)
  */
 PresenceEngine::~PresenceEngine()
 {
-	delete d->m_accountManager;
+	// \todo: FIXME. Why there is a problem?
+//	delete d->m_accountManager;
 	delete d;
 }
 
@@ -155,13 +157,15 @@ void PresenceEngine::init()
     	new Telepathy::Client::AccountManager(QDBusConnection::sessionBus());
     
     /*
-     * get a list of all the accounts that
-     * are all ready there
+     * connect signal from the account manager
+     * to waiting when it's ready
      */
-    QList<Telepathy::Client::Account *> accounts = d->m_accountManager->allAccounts();
-    kDebug() << "accounts: " << accounts.size();
+    connect(d->m_accountManager->becomeReady(),
+    		SIGNAL(finished(Telepathy::Client::PendingOperation*)),
+    		this,
+    		SLOT(onAccountReady(Telepathy::Client::PendingOperation*))
+    		);
     
-    Telepathy::ObjectPathList objectPathList = d->m_accountManager->allAccountPaths();
     /*
      * connect signals from the account manager
      * to slots within this data engine.
@@ -177,15 +181,6 @@ void PresenceEngine::init()
             this, SLOT(accountValidityChanged(const QDBusObjectPath &, bool)));
     connect(d->m_accountManager, SIGNAL(accountRemoved(const QDBusObjectPath &)),
             this, SLOT(accountRemoved(const QDBusObjectPath &)));
-
-    /*
-     * create a datasource for each
-     * of the accounts we got in the list.
-     */
-    foreach(const QDBusObjectPath &path, objectPathList)
-    {
-        d->createAccountDataSource(path);
-    }
 }
 
 /**
@@ -203,6 +198,37 @@ bool PresenceEngine::sourceRequestEvent(const QString & name)
      */
     Q_UNUSED(name);
     return false;
+}
+
+void PresenceEngine::onAccountReady(Telepathy::Client::PendingOperation *operation)
+{
+	kDebug() << "onAccountReady() called";
+	if(operation->isError())
+	{
+		kDebug() << operation->errorName() << ": " << operation->errorMessage();
+		return;
+	}
+	
+    Telepathy::ObjectPathList pathList = d->m_accountManager->allAccountPaths();
+    kDebug() << "All Account Paths: " << pathList.size();
+    
+    /*
+     * get a list of all the accounts that
+     * are all ready there
+     */
+    QList<Telepathy::Client::Account *> accounts = d->m_accountManager->allAccounts();
+    kDebug() << "accounts: " << accounts.size();
+    
+    Telepathy::ObjectPathList objectPathList = d->m_accountManager->allAccountPaths();
+    
+    /*
+     * create a datasource for each
+     * of the accounts we got in the list.
+     */
+    foreach(const QDBusObjectPath &path, objectPathList)
+    {
+        d->createAccountDataSource(path);
+    }
 }
 
 /**

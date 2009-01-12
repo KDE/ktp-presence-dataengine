@@ -20,6 +20,7 @@
 #define PLASMA_DATAENGINE_PRESENCE_H
 
 #include <plasma/dataengine.h>
+#include <TelepathyQt4/Client/PendingOperation>
 
 class QDBusObjectPath;
 
@@ -36,6 +37,7 @@ protected:
     bool sourceRequestEvent(const QString & name);
 
 private Q_SLOTS:
+	void onAccountReady(Telepathy::Client::PendingOperation *operation);
     void accountCreated(const QDBusObjectPath &path);
     void accountRemoved(const QDBusObjectPath &path);
     void accountValidityChanged(const QDBusObjectPath &path, bool valid);
