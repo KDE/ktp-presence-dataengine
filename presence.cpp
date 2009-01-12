@@ -46,13 +46,13 @@ public:
 	    QString source;
 	    // \todo: FIXME
 	    // source = account.uniqueIdentifier();
+	    source = path.path();
+	    
 	    Telepathy::SimplePresence sp = account->currentPresence();
 	    QVariant vsp;
 	    vsp.setValue(sp);
 	    parent->setData(source, "current_presence", vsp);
 	    
-		// emit parent->sourceAdded(account->uniqueIdentifier());
-
 		// \todo: remove
 /*
 			QString source;
@@ -74,8 +74,6 @@ public:
 		            setData(source, "status_message", itr.value().toMap().value("status_message").toString());
 		        }
 		    }
-		
-		emit parent->sourceAdded(account->uniqueIdentifier());
 */
 	}
 	
@@ -92,6 +90,8 @@ public:
 		parent->removeSource(identifier);
 		emit parent->sourceRemoved(identifier);
 */
+		QString identifier = path.path();
+		parent->removeSource(identifier);
 	}
 	
 	Telepathy::Client::Account *accountFromObjectPath(const QDBusObjectPath &path)
@@ -190,6 +190,7 @@ void PresenceEngine::init()
  */
 bool PresenceEngine::sourceRequestEvent(const QString & name)
 {
+	kDebug() << "sourceRequestEvent() called";
     /*
      * if the visualisation requests a
      * source that is not already there
@@ -269,7 +270,7 @@ void PresenceEngine::accountValidityChanged(const QDBusObjectPath &path, bool va
  */
 void PresenceEngine::accountRemoved(const QDBusObjectPath &path)
 {
-    kDebug() << "uint handle() called";
+    kDebug() << "accountRemoved() called";
     /*
      * slot called when an account has been deleted
      *
