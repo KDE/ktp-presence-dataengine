@@ -41,12 +41,10 @@ public:
 		// \todo: FIXME
 		kDebug() << "createAccountDataSource called";
 		kDebug() << path;
-	    Telepathy::Client::Account *account = accountFromObjectPath(path);
+	    Telepathy::Client::Account *account = accountFromPath(path);
 
 	    QString source;
-	    // \todo: FIXME
-	    // source = account.uniqueIdentifier();
-	    source = path;
+	    source = account->uniqueIdentifier();
 	    
 	    Telepathy::SimplePresence sp = account->currentPresence();
 	    QVariant vsp;
@@ -81,18 +79,13 @@ public:
 	{
 		kDebug() << "removeAccountDataSource called";
 		kDebug() << path;
-		
-		// \todo: FIXME
-/*
+
+		Telepathy::Client::Account *account = accountFromPath(path);
 		QString identifier = account->uniqueIdentifier();
-		parent->removeSource(identifier);
-		emit parent->sourceRemoved(identifier);
-*/
-		QString identifier = path;
 		parent->removeSource(identifier);
 	}
 	
-	Telepathy::Client::Account *accountFromObjectPath(const QString &path)
+	Telepathy::Client::Account *accountFromPath(const QString &path)
 	{
 		return m_accountManager->accountForPath(path);
 	}
@@ -127,7 +120,7 @@ PresenceEngine::PresenceEngine(QObject * parent, const QVariantList & args)
 PresenceEngine::~PresenceEngine()
 {
 	// \todo: FIXME. Why there is a problem?
-//	delete d->m_accountManager;
+	// delete d->m_accountManager;
 	delete d;
 }
 
