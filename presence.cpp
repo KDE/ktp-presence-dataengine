@@ -36,17 +36,17 @@ public:
 	
 	Telepathy::Client::AccountManager * m_accountManager;
 	
-	void createAccountDataSource(const QDBusObjectPath &path)
+	void createAccountDataSource(const QString &path)
 	{
 		// \todo: FIXME
 		kDebug() << "createAccountDataSource called";
-		kDebug() << path.path();
+		kDebug() << path;
 	    Telepathy::Client::Account *account = accountFromObjectPath(path);
 
 	    QString source;
 	    // \todo: FIXME
 	    // source = account.uniqueIdentifier();
-	    source = path.path();
+	    source = path;
 	    
 	    Telepathy::SimplePresence sp = account->currentPresence();
 	    QVariant vsp;
@@ -77,12 +77,10 @@ public:
 */
 	}
 	
-	void removeAccountDataSource(const QDBusObjectPath &path)
+	void removeAccountDataSource(const QString &path)
 	{
 		kDebug() << "removeAccountDataSource called";
-		kDebug() << path.path();
-		
-		Telepathy::Client::Account *account = accountFromObjectPath(path);
+		kDebug() << path;
 		
 		// \todo: FIXME
 /*
@@ -90,11 +88,11 @@ public:
 		parent->removeSource(identifier);
 		emit parent->sourceRemoved(identifier);
 */
-		QString identifier = path.path();
+		QString identifier = path;
 		parent->removeSource(identifier);
 	}
 	
-	Telepathy::Client::Account *accountFromObjectPath(const QDBusObjectPath &path)
+	Telepathy::Client::Account *accountFromObjectPath(const QString &path)
 	{
 		return m_accountManager->accountForPath(path);
 	}
@@ -210,7 +208,7 @@ void PresenceEngine::onAccountReady(Telepathy::Client::PendingOperation *operati
 		return;
 	}
 	
-    Telepathy::ObjectPathList pathList = d->m_accountManager->allAccountPaths();
+    QStringList pathList = d->m_accountManager->allAccountPaths();
     kDebug() << "All Account Paths: " << pathList.size();
     
     /*
@@ -220,13 +218,11 @@ void PresenceEngine::onAccountReady(Telepathy::Client::PendingOperation *operati
     QList<Telepathy::Client::Account *> accounts = d->m_accountManager->allAccounts();
     kDebug() << "accounts: " << accounts.size();
     
-    Telepathy::ObjectPathList objectPathList = d->m_accountManager->allAccountPaths();
-    
     /*
      * create a datasource for each
      * of the accounts we got in the list.
      */
-    foreach(const QDBusObjectPath &path, objectPathList)
+    foreach(const QString &path, pathList)
     {
         d->createAccountDataSource(path);
     }
@@ -237,7 +233,7 @@ void PresenceEngine::onAccountReady(Telepathy::Client::PendingOperation *operati
  * 
  * \param path QDBusObjectPath to created account.
  */
-void PresenceEngine::accountCreated(const QDBusObjectPath &path)
+void PresenceEngine::accountCreated(const QString &path)
 {
     kDebug() << "accountCreated() called";
     // Load the data for the new account. To avoid duplicating code, we treat
@@ -252,7 +248,7 @@ void PresenceEngine::accountCreated(const QDBusObjectPath &path)
  * \param QDBusObjectPath Name of the account path.
  * \param valid true if the account is valid.
  */
-void PresenceEngine::accountValidityChanged(const QDBusObjectPath &path, bool valid)
+void PresenceEngine::accountValidityChanged(const QString &path, bool valid)
 {
 	Q_UNUSED(valid);
     kDebug() << "accountValidityChanged() called";
@@ -268,7 +264,7 @@ void PresenceEngine::accountValidityChanged(const QDBusObjectPath &path, bool va
  * 
  * \param QDBusObjectPath Name of the account path.
  */
-void PresenceEngine::accountRemoved(const QDBusObjectPath &path)
+void PresenceEngine::accountRemoved(const QString &path)
 {
     kDebug() << "accountRemoved() called";
     /*

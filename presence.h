@@ -38,9 +38,9 @@ protected:
 
 private Q_SLOTS:
 	void onAccountReady(Telepathy::Client::PendingOperation *operation);
-    void accountCreated(const QDBusObjectPath &path);
-    void accountRemoved(const QDBusObjectPath &path);
-    void accountValidityChanged(const QDBusObjectPath &path, bool valid);
+    void accountCreated(const QString &path);
+    void accountRemoved(const QString &path);
+    void accountValidityChanged(const QString &path, bool valid);
 
 private:
 	class PresenceEnginePrivate;
