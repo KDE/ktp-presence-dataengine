@@ -36,7 +36,7 @@ protected:
     void init();
     bool sourceRequestEvent(const QString & name);
 
-private Q_SLOTS:
+private slots:
 	void onAccountReady(Telepathy::Client::PendingOperation *operation);
     void accountCreated(const QString &path);
     void accountRemoved(const QString &path);

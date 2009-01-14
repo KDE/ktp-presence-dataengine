@@ -17,7 +17,7 @@ Name[sv]=Närvaro
 Name[tr]=Durum
 Name[uk]=Присутність
 Name[x-test]=xxPresencexx
-Comment=Decibel Presence Data Engine
+Comment=Telepathy Presence Data Engine
 Comment[el]=Μηχανή δεδομένων παρουσίας του Decibel
 Comment[es]=Motor de datos de Decibel Presence
 Comment[et]=Decibeli kohaloleku andmete mootor
@@ -33,7 +33,7 @@ Comment[uk]=Рушій даних присутності для Децибел
 Comment[x-test]=xxDecibel Presence Data Enginexx
 ServiceTypes=Plasma/DataEngine
 Type=Service
-Icon=application-decibel
+Icon=application-telepathy
 X-KDE-Library=plasma_engine_presence
 
 X-KDE-PluginInfo-Author=
