@@ -166,12 +166,12 @@ void PresenceEngine::init()
      * that if another is created while we are
      * processing them, we don't miss out on it.
      */
-    connect(d->m_accountManager, SIGNAL(accountCreated(const QDBusObjectPath &)),
-            this, SLOT(accountCreated(const QDBusObjectPath &)));
-    connect(d->m_accountManager, SIGNAL(accountValidityChanged(const QDBusObjectPath &, bool)),
-            this, SLOT(accountValidityChanged(const QDBusObjectPath &, bool)));
-    connect(d->m_accountManager, SIGNAL(accountRemoved(const QDBusObjectPath &)),
-            this, SLOT(accountRemoved(const QDBusObjectPath &)));
+    connect(d->m_accountManager, SIGNAL(accountCreated(const QString &)),
+            this, SLOT(accountCreated(const QString &)));
+    connect(d->m_accountManager, SIGNAL(accountValidityChanged(const QString &, bool)),
+            this, SLOT(accountValidityChanged(const QString &, bool)));
+    connect(d->m_accountManager, SIGNAL(accountRemoved(const QString &)),
+            this, SLOT(accountRemoved(const QString &)));
 }
 
 /**
