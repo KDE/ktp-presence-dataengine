@@ -22,7 +22,17 @@
 #include <plasma/dataengine.h>
 #include <TelepathyQt4/Client/PendingOperation>
 
+#include <QSharedPointer>
+
 class QDBusObjectPath;
+namespace Telepathy
+{
+    namespace Client
+    {
+        class AccountManager;
+        class Account;
+    }
+}
 
 class PresenceEngine : public Plasma::DataEngine
 {
@@ -38,13 +48,18 @@ protected:
 
 private slots:
 	void onAccountReady(Telepathy::Client::PendingOperation *operation);
+    void onExistingAccountReady(Telepathy::Client::PendingOperation *);
+    bool isOperationError(Telepathy::Client::PendingOperation *);
     void accountCreated(const QString &path);
     void accountRemoved(const QString &path);
     void accountValidityChanged(const QString &path, bool valid);
 
 private:
-	class PresenceEnginePrivate;
-	PresenceEnginePrivate * const d;
+    QSharedPointer<Telepathy::Client::Account> accountFromPath(const QString &path);
+    void removeAccountDataSource(const QString &path);
+    void createAccountDataSource(const QString &path);
+
+    Telepathy::Client::AccountManager * m_accountManager;
 };
 
 K_EXPORT_PLASMA_DATAENGINE(presence, PresenceEngine)
