@@ -20,6 +20,7 @@
 
 #include <TelepathyQt4/Client/Account>
 #include <TelepathyQt4/Client/AccountManager>
+#include <TelepathyQt4/Client/PendingReadyAccountManager>
 
 #include <KDebug>
 #include <KLocale>
@@ -38,10 +39,9 @@ public:
 	
 	void createAccountDataSource(const QString &path)
 	{
-		// \todo: FIXME
-		kDebug() << "createAccountDataSource called";
-		kDebug() << path;
-	    Telepathy::Client::Account *account = accountFromPath(path);
+	    kDebug() << "createAccountDataSource called";
+	    kDebug() << path;
+	    QSharedPointer<Telepathy::Client::Account> account = accountFromPath(path);
 
 	    QString source;
 	    source = account->uniqueIdentifier();
@@ -50,44 +50,21 @@ public:
 	    QVariant vsp;
 	    vsp.setValue(sp);
 	    parent->setData(source, "current_presence", vsp);
-	    
-		// \todo: remove
-/*
-			QString source;
-		    source.setNum(handle);
-		    QVariantMap accountData = m_accountManager->queryAccount(handle);
-		    QMap<QString, QVariant>::const_iterator end( accountData.constEnd() );
-		    for(QMap<QString, QVariant>::const_iterator itr(accountData.constBegin()); itr != end; ++itr)
-		    {
-		        if(itr.key() == Decibel::name_current_presence)
-		        {
-		            QtTapioca::PresenceState ps = qdbus_cast<QtTapioca::PresenceState>(itr.value().value<QDBusArgument>());
-		            QVariant psv;
-		            psv.setValue(ps);
-		            setData(source, "current_presence", psv);
-		            continue;
-		        }
-		        else if(itr.key() == Decibel::name_presence_parameters)
-		        {
-		            setData(source, "status_message", itr.value().toMap().value("status_message").toString());
-		        }
-		    }
-*/
 	}
 	
 	void removeAccountDataSource(const QString &path)
 	{
-		kDebug() << "removeAccountDataSource called";
-		kDebug() << path;
+	    kDebug() << "removeAccountDataSource called";
+	    kDebug() << path;
 
-		Telepathy::Client::Account *account = accountFromPath(path);
-		QString identifier = account->uniqueIdentifier();
-		parent->removeSource(identifier);
+	    QSharedPointer<Telepathy::Client::Account> account = accountFromPath(path);
+	    QString identifier = account->uniqueIdentifier();
+	    parent->removeSource(identifier);
 	}
 	
-	Telepathy::Client::Account *accountFromPath(const QString &path)
+	QSharedPointer<Telepathy::Client::Account> accountFromPath(const QString &path)
 	{
-		return m_accountManager->accountForPath(path);
+	    return m_accountManager->accountForPath(path);
 	}
 };
 
@@ -134,9 +111,12 @@ void PresenceEngine::init()
      * check that we are connected to the session
      * bus OK.
      */
+    d->m_accountManager = 0;
+
     if (!QDBusConnection::sessionBus().isConnected())
     {
         kDebug() << "PresenceEngine::init(): cannot connect to session bus.";
+        return;
     }
 
    /*
@@ -208,15 +188,7 @@ void PresenceEngine::onAccountReady(Telepathy::Client::PendingOperation *operati
      * get a list of all the accounts that
      * are all ready there
      */
-    QList<Telepathy::Client::Account *> accounts = d->m_accountManager->allAccounts();
-    kDebug() << "accounts: " << accounts.size();
-    
-    /*
-     * create a datasource for each
-     * of the accounts we got in the list.
-     */
-    foreach(const QString &path, pathList)
-    {
+    foreach (const QString &path, d->m_accountManager->allAccountPaths())  {
         d->createAccountDataSource(path);
     }
 }
