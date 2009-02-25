@@ -21,6 +21,8 @@
 
 #include <plasma/dataengine.h>
 #include <TelepathyQt4/Client/PendingOperation>
+#include <TelepathyQt4/Client/Account>
+
 
 #include <QSharedPointer>
 
@@ -47,12 +49,13 @@ protected:
     bool sourceRequestEvent(const QString & name);
 
 private slots:
-	void onAccountReady(Telepathy::Client::PendingOperation *operation);
+    void onAccountReady(Telepathy::Client::PendingOperation *operation);
     void onExistingAccountReady(Telepathy::Client::PendingOperation *);
     bool isOperationError(Telepathy::Client::PendingOperation *);
     void accountCreated(const QString &path);
     void accountRemoved(const QString &path);
     void accountValidityChanged(const QString &path, bool valid);
+    void currentPresenceChanged(const Telepathy::SimplePresence &);
 
 private:
     QSharedPointer<Telepathy::Client::Account> accountFromPath(const QString &path);

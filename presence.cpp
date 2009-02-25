@@ -18,7 +18,6 @@
 
 #include "presence.h"
 
-#include <TelepathyQt4/Client/Account>
 #include <TelepathyQt4/Client/AccountManager>
 #include <TelepathyQt4/Client/PendingReadyAccountManager>
 #include <TelepathyQt4/Client/PendingReadyAccount>
@@ -202,7 +201,8 @@ void PresenceEngine::createAccountDataSource(const QString &path)
     kDebug();
 	kDebug() << path;
 	QSharedPointer<Telepathy::Client::Account> account = accountFromPath(path);
-
+        QObject::connect(account.data(), SIGNAL(currentPresenceChanged(const Telepathy::SimplePresence &)), this
+                , SLOT(currentPresenceChanged(const Telepathy::SimplePresence &)));
     QObject::connect(account->becomeReady(), SIGNAL(finished(Telepathy::Client::PendingOperation *)),
         this, SLOT(onExistingAccountReady(Telepathy::Client::PendingOperation *)));
 }
@@ -254,6 +254,16 @@ bool PresenceEngine::isOperationError(Telepathy::Client::PendingOperation *opera
 	}
 
     return false;
+}
+
+void PresenceEngine::currentPresenceChanged(const Telepathy::SimplePresence & presence)
+{
+    QVariant vsp;
+    vsp.setValue(presence);
+    foreach (QString source, sources()) {
+       setData(source, "current_presence", vsp);
+    }
+    updateAllSources();
 }
 
 #include "presence.moc"
