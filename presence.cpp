@@ -83,19 +83,17 @@ void PresenceEngine::init()
     * which will provide all the data to this
     * data engine.
     */
-    m_accountManager = 
-    	new Telepathy::Client::AccountManager(QDBusConnection::sessionBus());
-    
+    m_accountManager =
+        new Telepathy::Client::AccountManager(QDBusConnection::sessionBus());
+
     /*
      * connect signal from the account manager
      * to waiting when it's ready
      */
     connect(m_accountManager->becomeReady(),
-    		SIGNAL(finished(Telepathy::Client::PendingOperation*)),
-    		this,
-    		SLOT(onAccountReady(Telepathy::Client::PendingOperation*))
-    		);
-    
+    SIGNAL(finished(Telepathy::Client::PendingOperation*)),
+           this,SLOT(onAccountReady(Telepathy::Client::PendingOperation*)));
+
     /*
      * connect signals from the account manager
      * to slots within this data engine.
@@ -115,12 +113,12 @@ void PresenceEngine::init()
 
 /**
  * Return whether source exist.
- * 
+ *
  * \return \c true if source exists.
  */
 bool PresenceEngine::sourceRequestEvent(const QString & name)
 {
-	kDebug();
+    kDebug();
     /*
      * if the visualisation requests a
      * source that is not already there
@@ -133,13 +131,13 @@ bool PresenceEngine::sourceRequestEvent(const QString & name)
 
 void PresenceEngine::onAccountReady(Telepathy::Client::PendingOperation *operation)
 {
-	kDebug();
+    kDebug();
     if(isOperationError(operation))
         return;
-	
+
     QStringList pathList = m_accountManager->allAccountPaths();
     kDebug() << "All Account Paths: " << pathList.size();
-    
+
     /*
      * get a list of all the accounts that
      * are all ready there
@@ -151,7 +149,7 @@ void PresenceEngine::onAccountReady(Telepathy::Client::PendingOperation *operati
 
 /**
  *  Slot for new account.
- * 
+ *
  * \param path QDBusObjectPath to created account.
  */
 void PresenceEngine::accountCreated(const QString &path)
@@ -165,13 +163,13 @@ void PresenceEngine::accountCreated(const QString &path)
 
 /**
  * Slot for account data changed.
- * 
+ *
  * \param QDBusObjectPath Name of the account path.
  * \param valid true if the account is valid.
  */
 void PresenceEngine::accountValidityChanged(const QString &path, bool valid)
 {
-	Q_UNUSED(valid);
+    Q_UNUSED(valid);
     kDebug();
     /*
      * slot called when an account has
@@ -182,7 +180,7 @@ void PresenceEngine::accountValidityChanged(const QString &path, bool valid)
 
 /**
  * Slot for account removed.
- * 
+ *
  * \param QDBusObjectPath Name of the account path.
  */
 void PresenceEngine::accountRemoved(const QString &path)
@@ -198,11 +196,10 @@ void PresenceEngine::accountRemoved(const QString &path)
 
 void PresenceEngine::createAccountDataSource(const QString &path)
 {
-    kDebug();
-	kDebug() << path;
-	QSharedPointer<Telepathy::Client::Account> account = accountFromPath(path);
-        QObject::connect(account.data(), SIGNAL(currentPresenceChanged(const Telepathy::SimplePresence &)), this
-                , SLOT(currentPresenceChanged(const Telepathy::SimplePresence &)));
+    kDebug() << path;
+    QSharedPointer<Telepathy::Client::Account> account = accountFromPath(path);
+    QObject::connect(account.data(), SIGNAL(currentPresenceChanged(const Telepathy::SimplePresence &)),
+        this, SLOT(currentPresenceChanged(const Telepathy::SimplePresence &)));
     QObject::connect(account->becomeReady(), SIGNAL(finished(Telepathy::Client::PendingOperation *)),
         this, SLOT(onExistingAccountReady(Telepathy::Client::PendingOperation *)));
 }
@@ -210,7 +207,7 @@ void PresenceEngine::createAccountDataSource(const QString &path)
 void PresenceEngine::onExistingAccountReady(Telepathy::Client::PendingOperation *operation)
 {
     kDebug();
-    
+
     if(isOperationError(operation))
         return;
 
@@ -219,24 +216,22 @@ void PresenceEngine::onExistingAccountReady(Telepathy::Client::PendingOperation 
         return;
 
     Telepathy::Client::Account *account = pa->account();
-    
-	QString source;
-	source = account->uniqueIdentifier();
 
-	Telepathy::SimplePresence sp = account->currentPresence();
-	QVariant vsp;
-	vsp.setValue(sp);
-	setData(source, "current_presence", vsp);
+    QString source;
+    source = account->uniqueIdentifier();
+    Telepathy::SimplePresence sp = account->currentPresence();
+    QVariant vsp;
+    vsp.setValue(sp);
+    setData(source, "current_presence", vsp);
 }
 
 void PresenceEngine::removeAccountDataSource(const QString &path)
 {
-    kDebug();
-	kDebug() << path;
+    kDebug() << path;
 
-	QSharedPointer<Telepathy::Client::Account> account = accountFromPath(path);
-	QString identifier = account->uniqueIdentifier();
-	removeSource(identifier);
+    QSharedPointer<Telepathy::Client::Account> account = accountFromPath(path);
+    QString identifier = account->uniqueIdentifier();
+    removeSource(identifier);
 }
 
 QSharedPointer<Telepathy::Client::Account> PresenceEngine::accountFromPath(const QString &path)
@@ -247,11 +242,10 @@ QSharedPointer<Telepathy::Client::Account> PresenceEngine::accountFromPath(const
 
 bool PresenceEngine::isOperationError(Telepathy::Client::PendingOperation *operation)
 {
-	if(operation->isError())
-	{
-		kDebug() << operation->errorName() << ": " << operation->errorMessage();
-		return true;
-	}
+    if (operation->isError()) {
+        kDebug() << operation->errorName() << ": " << operation->errorMessage();
+        return true;
+    }
 
     return false;
 }
