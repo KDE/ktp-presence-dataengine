@@ -21,6 +21,7 @@
 #include <TelepathyQt4/Client/AccountManager>
 #include <TelepathyQt4/Client/PendingReadyAccountManager>
 #include <TelepathyQt4/Client/PendingReadyAccount>
+#include <TelepathyQt4/Client/PendingReady>
 
 #include <KDebug>
 #include <KLocale>
@@ -211,11 +212,9 @@ void PresenceEngine::onExistingAccountReady(Telepathy::Client::PendingOperation 
     if(isOperationError(operation))
         return;
 
-    Telepathy::Client::PendingReadyAccount *pa = dynamic_cast<Telepathy::Client::PendingReadyAccount *>(operation);
-    if(!pa)
+    Telepathy::Client::Account *account = qobject_cast<Telepathy::Client::Account *>(operation->parent());
+    if(!account)
         return;
-
-    Telepathy::Client::Account *account = pa->account();
 
     QString source;
     source = account->uniqueIdentifier();
