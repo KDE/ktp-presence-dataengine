@@ -19,227 +19,227 @@
 
 #include "presence.h"
 
-#include <TelepathyQt4/Client/AccountManager>
-#include <TelepathyQt4/Client/PendingReady>
-
 #include <KDebug>
-#include <KLocale>
-#include <KUrl>
 
-#include <QtCore/QDateTime>
-#include <QtCore/QTimer>
+#include <TelepathyQt4/Client/AccountManager>
+#include <TelepathyQt4/Client/Feature>
+#include <TelepathyQt4/Client/PendingAccount>
+#include <TelepathyQt4/Client/PendingReady>
+#include <TelepathyQt4/Constants>
 
-/**
- * \class PresenceEngine
- * \ingroup presence
- * \headerfile <presence.h>
- *
- * Object representing a Presence data source.
- */
 
-/**
- * Construct a new PresenceEngine object.
- *
- * \param parent Object parent.
- * \param args QVariantList arguments.
- */
 PresenceEngine::PresenceEngine(QObject * parent, const QVariantList & args)
-  : Plasma::DataEngine(parent, args)
+  : Plasma::DataEngine(parent, args),
+    m_accountManager(0)
 {
-    kDebug();
-    // Register custom types:
+    kDebug();   // Output the method we are in.
+
+    // Register custom TelepathyQt4 types
     Telepathy::registerTypes();
+
+    // Set the icon to be nothing for now.
     setIcon(QString());
 }
 
-/**
- * Class destructor
- */
 PresenceEngine::~PresenceEngine()
 {
-    kDebug();
+    kDebug();   // Output the method we are in.
+
+    // Delete the AccountManager.
+    if(m_accountManager != 0)
+    {
+        delete m_accountManager;
+    }
 }
 
-/**
- * Initialize Presence.
- */
 void PresenceEngine::init()
 {
-    kDebug();
-    /*
-     * check that we are connected to the session
-     * bus OK.
-     */
-    m_accountManager = 0;
+    kDebug();   // Output the method we are in.
 
-    if (!QDBusConnection::sessionBus().isConnected())
+    // Check we are connected to the session bus.
+    if(!QDBusConnection::sessionBus().isConnected())
     {
-        kDebug() << "PresenceEngine::init(): cannot connect to session bus.";
+        kWarning() << "PresenceEngine::init(): cannot connect to session bus.";
         return;
     }
 
-   /*
-    * set up the dbus accountmanager object
-    * which will provide all the data to this
-    * data engine.
-    */
-    m_accountManager =
-        new Telepathy::Client::AccountManager(QDBusConnection::sessionBus());
+    // Construct the Telepathy AccountManager
+    m_accountManager = new Telepathy::Client::AccountManager(QDBusConnection::sessionBus());
 
-    /*
-     * connect signal from the account manager
-     * to waiting when it's ready
-     */
-    connect(m_accountManager->becomeReady(),
-    SIGNAL(finished(Telepathy::Client::PendingOperation*)),
-           this,SLOT(onAccountReady(Telepathy::Client::PendingOperation*)));
+    // Get te AccountManager ready with the desired features.
+    QSet<Telepathy::Client::Feature> features;
+    features << Telepathy::Client::AccountManager::FeatureCore;
 
-    /*
-     * connect signals from the account manager
-     * to slots within this data engine.
-     *
-     * we intentionally do this before processing
-     * the accounts that are already created so
-     * that if another is created while we are
-     * processing them, we don't miss out on it.
-     */
+    connect(m_accountManager->becomeReady(features),
+            SIGNAL(finished(Telepathy::Client::PendingOperation*)),
+            this, SLOT(onAccountManagerReady(Telepathy::Client::PendingOperation*)));
+
+    // Connect the signals from the AccountManager indicating that Accounts
+    //  have changed to slots to handle these changes.
     connect(m_accountManager, SIGNAL(accountCreated(const QString &)),
-            this, SLOT(accountCreated(const QString &)));
+            this, SLOT(onAccountCreated(const QString &)));
     connect(m_accountManager, SIGNAL(accountValidityChanged(const QString &, bool)),
-            this, SLOT(accountValidityChanged(const QString &, bool)));
+            this, SLOT(onAccountValidityChanged(const QString &, bool)));
     connect(m_accountManager, SIGNAL(accountRemoved(const QString &)),
-            this, SLOT(accountRemoved(const QString &)));
+            this, SLOT(onAccountRemoved(const QString &)));
 }
 
-/**
- * Return whether source exist.
- *
- * \return \c true if source exists.
- */
+
 bool PresenceEngine::sourceRequestEvent(const QString & name)
 {
-    kDebug();
-    /*
-     * if the visualisation requests a
-     * source that is not already there
-     * then it doesn't exist, so return
-     * false
-     */
+    kDebug();   // Output the method we are in.
+
     Q_UNUSED(name);
+
+    // This method is only called if a source is requested that does *not*
+    // already exist. Since it makes no sense to allow creation of new sources,
+    // we just automatically return false here.
     return false;
 }
 
-void PresenceEngine::onAccountReady(Telepathy::Client::PendingOperation *operation)
+void PresenceEngine::onAccountManagerReady(Telepathy::Client::PendingOperation *op)
 {
-    kDebug();
-    if(isOperationError(operation))
+    kDebug();   // Output the method we are in.
+
+    // Check if the operation succeeded or not.
+    if(isOperationError(op))
+    {
         return;
+    }
 
-    QStringList pathList = m_accountManager->allAccountPaths();
-    kDebug() << "All Account Paths: " << pathList.size();
+    // Get all the valid accounts from the AccountManager.
+    m_accounts = m_accountManager->validAccounts();
 
-    /*
-     * get a list of all the accounts that
-     * are all ready there
-     */
-    foreach (const QString &path, m_accountManager->allAccountPaths())  {
-        createAccountDataSource(path);
+    // Specify the features we want the accounts to become ready with
+    QSet<Telepathy::Client::Feature> features;
+    features << Telepathy::Client::Account::FeatureCore;
+    // features << Telepathy::Client::Account::FeatureAvatar;  // FIXME: Uncomment me once t-a-k supports avatars
+    features << Telepathy::Client::Account::FeatureProtocolInfo;
+
+    // Iterate over all the accounts and have them become ready.
+    Q_FOREACH(Telepathy::Client::AccountPtr account, m_accounts)
+    {
+        connect(account.data()->becomeReady(features),
+                SIGNAL(finished(Telepathy::Client::PendingOperation*)),
+                this, SLOT(onAccountReady(Telepathy::Client::PendingOperation*)));
     }
 }
 
-/**
- *  Slot for new account.
- *
- * \param path QDBusObjectPath to created account.
- */
-void PresenceEngine::accountCreated(const QString &path)
+void PresenceEngine::onAccountReady(Telepathy::Client::PendingOperation *op)
 {
-    kDebug();
-    // Load the data for the new account. To avoid duplicating code, we treat
-    // this just as if an account was updated, and call the method to handle
-    // that.
-    createAccountDataSource(path);
-}
+    kDebug();   // Output the method we are in.
 
-/**
- * Slot for account data changed.
- *
- * \param QDBusObjectPath Name of the account path.
- * \param valid true if the account is valid.
- */
-void PresenceEngine::accountValidityChanged(const QString &path, bool valid)
-{
-    Q_UNUSED(valid);
-    kDebug();
-    /*
-     * slot called when an account has
-     * been updated.
-     */
-    createAccountDataSource(path);
-}
-
-/**
- * Slot for account removed.
- *
- * \param QDBusObjectPath Name of the account path.
- */
-void PresenceEngine::accountRemoved(const QString &path)
-{
-    kDebug();
-    /*
-     * slot called when an account has been deleted
-     *
-     * remove that source.
-     */
-    removeAccountDataSource(path);
-}
-
-void PresenceEngine::createAccountDataSource(const QString &path)
-{
-    kDebug() << path;
-    Telepathy::Client::AccountPtr account = accountFromPath(path);
-    QObject::connect(account.data(), SIGNAL(currentPresenceChanged(const Telepathy::SimplePresence &)),
-        this, SLOT(currentPresenceChanged(const Telepathy::SimplePresence &)));
-    QObject::connect(account->becomeReady(), SIGNAL(finished(Telepathy::Client::PendingOperation *)),
-        this, SLOT(onExistingAccountReady(Telepathy::Client::PendingOperation *)));
-}
-
-void PresenceEngine::onExistingAccountReady(Telepathy::Client::PendingOperation *operation)
-{
-    kDebug();
-
-    if(isOperationError(operation))
+    // Check if the operation succeeded or not.
+    if(isOperationError(op))
+    {
         return;
+    }
 
-    Telepathy::Client::Account *account = qobject_cast<Telepathy::Client::Account *>(operation->parent());
-    if(!account)
+    Telepathy::Client::Account *account = qobject_cast<Telepathy::Client::Account*>(op->parent());
+
+    // We should check the account is valid, and if not, remove it from the
+    // list of accounts and the return.
+    if(!account->isValidAccount())
+    {
+        Q_FOREACH(Telepathy::Client::AccountPtr accountPtr, m_accounts)
+        {
+            if(accountPtr->uniqueIdentifier() == account->uniqueIdentifier())
+            {
+                accountPtr->disconnect();
+                removeSource(accountPtr->uniqueIdentifier());
+                m_accounts.removeAll(accountPtr);
+                return;
+            }
+        }
         return;
+    }
 
+    connect(account, SIGNAL(currentPresenceChanged(const Telepathy::SimplePresence &)),
+            this, SLOT(onAccountCurrentPresenceChanged(const Telepathy::SimplePresence &)));
+    // FIXME: Should we connect to signals for any other type of information than just current presence?
+
+    // Now we should set up a data source for this account.
     QString source;
     source = account->uniqueIdentifier();
-    Telepathy::SimplePresence sp = account->currentPresence();
-    QVariant vsp;
-    vsp.setValue(sp);
-    setData(source, "current_presence", vsp);
+    Telepathy::SimplePresence currentPresence = account->currentPresence();
+    setData(source, "current_presence_type", presenceTypeToString(currentPresence.type));
+    setData(source, "current_presence_status", currentPresence.status);
+    setData(source, "current_presence_status_message", currentPresence.statusMessage);
+    // FIXME: Make things other than just current presence available for the source.
 }
 
-void PresenceEngine::removeAccountDataSource(const QString &path)
+void PresenceEngine::onAccountCreated(const QString &path)
 {
-    kDebug() << path;
+    kDebug();   // Output the method we are in.
 
-    Telepathy::Client::AccountPtr account = accountFromPath(path);
-    QString identifier = account->uniqueIdentifier();
-    removeSource(identifier);
+    // Get an AccountPtr from the string we receive
+    Telepathy::Client::AccountPtr account = m_accountManager->accountForPath(path);
+
+    // Check if this account is already in the list.
+    Q_FOREACH(Telepathy::Client::AccountPtr accountPtr, m_accounts)
+    {
+        if(accountPtr->uniqueIdentifier() == account->uniqueIdentifier())
+        {
+            // We already have that account.
+            return;
+        }
+    }
+
+    // Add the account to the list.
+    m_accounts.append(account);
+
+    // Specify the features we want the accounts to become ready with
+    QSet<Telepathy::Client::Feature> features;
+    features << Telepathy::Client::Account::FeatureCore;
+    // features << Telepathy::Client::Account::FeatureAvatar;  // FIXME: Uncomment me once t-a-k supports avatars
+    features << Telepathy::Client::Account::FeatureProtocolInfo;
+
+    // Account is not in the list already, so we should get it ready.
+    connect(account.data()->becomeReady(features),
+            SIGNAL(finished(Telepathy::Client::PendingOperation*)),
+            this, SLOT(onAccountReady(Telepathy::Client::PendingOperation*)));
 }
 
-Telepathy::Client::AccountPtr PresenceEngine::accountFromPath(const QString &path)
+void PresenceEngine::onAccountValidityChanged(const QString &path, bool valid)
 {
-    kDebug();
-    return m_accountManager->accountForPath(path);
+    kDebug();   // Output the method we are in.
+
+    // Use the other two methods to avoid code duplication
+    if(valid)
+    {
+        onAccountCreated(path);
+    }
+    else
+    {
+        onAccountRemoved(path);
+    }
+}
+
+void PresenceEngine::onAccountRemoved(const QString &path)
+{
+    kDebug();   // Output the method we are in.
+
+    // Get the AccountPtr from the path.
+    Telepathy::Client::AccountPtr account = m_accountManager->accountForPath(path);
+
+    // Remove the account from the list, disconnect it and remove the data source
+    Q_FOREACH(Telepathy::Client::AccountPtr accountPtr, m_accounts)
+    {
+        if(accountPtr->uniqueIdentifier() == account->uniqueIdentifier())
+        {
+            accountPtr->disconnect();
+            removeSource(accountPtr->uniqueIdentifier());
+            m_accounts.removeAll(accountPtr);
+            return;
+        }
+    }
 }
 
 bool PresenceEngine::isOperationError(Telepathy::Client::PendingOperation *operation)
 {
+    kDebug();   // Output the method we are in.
+
+    // Checks if a pending operation was successful and outputs debug if not.
     if (operation->isError()) {
         kDebug() << operation->errorName() << ": " << operation->errorMessage();
         return true;
@@ -248,15 +248,64 @@ bool PresenceEngine::isOperationError(Telepathy::Client::PendingOperation *opera
     return false;
 }
 
-void PresenceEngine::currentPresenceChanged(const Telepathy::SimplePresence & presence)
+void PresenceEngine::onAccountCurrentPresenceChanged(const Telepathy::SimplePresence & presence)
 {
-    QVariant vsp;
-    vsp.setValue(presence);
-    foreach (QString source, sources()) {
-       setData(source, "current_presence", vsp);
-    }
-    updateAllSources();
+    kDebug();   // Output the method we are in.
+
+    // Get the account which triggered this call.
+    Telepathy::Client::Account *account = qobject_cast<Telepathy::Client::Account*>(sender());
+    Q_ASSERT(account);
+
+    // Set the presence of this account
+    QString source;
+    source = account->uniqueIdentifier();
+    Telepathy::SimplePresence currentPresence = account->currentPresence();
+    setData(source, "current_presence_type", presenceTypeToString(currentPresence.type));
+    setData(source, "current_presence_status", currentPresence.status);
+    setData(source, "current_presence_status_message", currentPresence.statusMessage);
+    // FIXME: Make things other than just current presence available for the source.
 }
+
+QString PresenceEngine::presenceTypeToString(uint type)
+{
+    // This method converts a presence type from a telepathy SimplePresence
+    // struct to a string representation for data sources.
+    QString ret;
+
+    switch(type)
+    {
+    case Telepathy::ConnectionPresenceTypeUnset:
+        ret = "unset";
+        break;
+    case Telepathy::ConnectionPresenceTypeOffline:
+        ret = "offline";
+        break;
+    case Telepathy::ConnectionPresenceTypeAvailable:
+        ret = "available";
+        break;
+    case Telepathy::ConnectionPresenceTypeAway:
+        ret = "away";
+        break;
+    case Telepathy::ConnectionPresenceTypeExtendedAway:
+        ret = "xa";
+        break;
+    case Telepathy::ConnectionPresenceTypeHidden:
+        ret = "invisible";
+        break;
+    case Telepathy::ConnectionPresenceTypeBusy:
+        ret = "busy";
+        break;
+    case Telepathy::ConnectionPresenceTypeError:
+        ret = "error";
+        break;
+    default:
+        ret = "unknown";
+        break;
+    }
+
+    return ret;
+}
+
 
 #include "presence.moc"
 

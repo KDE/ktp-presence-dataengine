@@ -22,16 +22,16 @@
 
 #include <plasma/dataengine.h>
 
-#include <TelepathyQt4/Client/Account>
-#include <TelepathyQt4/Client/PendingOperation>
+#include <QtCore/QList>
 
-class QDBusObjectPath;
+#include <TelepathyQt4/Client/Account>
+
 namespace Telepathy
 {
     namespace Client
     {
         class AccountManager;
-        class Account;
+        class PendingOperation;
     }
 }
 
@@ -47,24 +47,24 @@ protected:
     void init();
     bool sourceRequestEvent(const QString & name);
 
-private slots:
-    void onAccountReady(Telepathy::Client::PendingOperation *operation);
-    void onExistingAccountReady(Telepathy::Client::PendingOperation *);
-    bool isOperationError(Telepathy::Client::PendingOperation *);
-    void accountCreated(const QString &path);
-    void accountRemoved(const QString &path);
-    void accountValidityChanged(const QString &path, bool valid);
-    void currentPresenceChanged(const Telepathy::SimplePresence &);
+private Q_SLOTS:
+    void onAccountManagerReady(Telepathy::Client::PendingOperation *op);
+    void onAccountReady(Telepathy::Client::PendingOperation *op);
+    void onAccountCreated(const QString &path);
+    void onAccountRemoved(const QString &path);
+    void onAccountValidityChanged(const QString &path, bool valid);
+    void onAccountCurrentPresenceChanged(const Telepathy::SimplePresence &);
 
 private:
-    Telepathy::Client::AccountPtr accountFromPath(const QString &path);
-    void removeAccountDataSource(const QString &path);
-    void createAccountDataSource(const QString &path);
+    bool isOperationError(Telepathy::Client::PendingOperation *);
+    QString presenceTypeToString(uint type);
 
-    Telepathy::Client::AccountManager * m_accountManager;
+    QList<Telepathy::Client::AccountPtr> m_accounts;
+    Telepathy::Client::AccountManager *m_accountManager;
 };
 
 K_EXPORT_PLASMA_DATAENGINE(presence, PresenceEngine)
 
-#endif
+
+#endif // Include guard
 
