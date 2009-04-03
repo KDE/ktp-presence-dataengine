@@ -1,5 +1,6 @@
 /*
  *   Copyright (C) 2008 George Goldberg <grundleborg@googlemail.com>
+ *   Copyright (C) 2009 Collabora Ltd <http://www.collabora.co.uk>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License version 2 as
@@ -20,11 +21,9 @@
 #define PLASMA_DATAENGINE_PRESENCE_H
 
 #include <plasma/dataengine.h>
-#include <TelepathyQt4/Client/PendingOperation>
+
 #include <TelepathyQt4/Client/Account>
-
-
-#include <QSharedPointer>
+#include <TelepathyQt4/Client/PendingOperation>
 
 class QDBusObjectPath;
 namespace Telepathy
@@ -58,7 +57,7 @@ private slots:
     void currentPresenceChanged(const Telepathy::SimplePresence &);
 
 private:
-    QSharedPointer<Telepathy::Client::Account> accountFromPath(const QString &path);
+    Telepathy::Client::AccountPtr accountFromPath(const QString &path);
     void removeAccountDataSource(const QString &path);
     void createAccountDataSource(const QString &path);
 

@@ -1,5 +1,6 @@
 /*
  *   Copyright (C) 2008 George Goldberg <grundleborg@googlemail.com>
+ *   Copyright (C) 2009 Collabora Ltd <http://www.collabora.co.uk>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License version 2 as
@@ -19,8 +20,6 @@
 #include "presence.h"
 
 #include <TelepathyQt4/Client/AccountManager>
-#include <TelepathyQt4/Client/PendingReadyAccountManager>
-#include <TelepathyQt4/Client/PendingReadyAccount>
 #include <TelepathyQt4/Client/PendingReady>
 
 #include <KDebug>
@@ -198,7 +197,7 @@ void PresenceEngine::accountRemoved(const QString &path)
 void PresenceEngine::createAccountDataSource(const QString &path)
 {
     kDebug() << path;
-    QSharedPointer<Telepathy::Client::Account> account = accountFromPath(path);
+    Telepathy::Client::AccountPtr account = accountFromPath(path);
     QObject::connect(account.data(), SIGNAL(currentPresenceChanged(const Telepathy::SimplePresence &)),
         this, SLOT(currentPresenceChanged(const Telepathy::SimplePresence &)));
     QObject::connect(account->becomeReady(), SIGNAL(finished(Telepathy::Client::PendingOperation *)),
@@ -228,12 +227,12 @@ void PresenceEngine::removeAccountDataSource(const QString &path)
 {
     kDebug() << path;
 
-    QSharedPointer<Telepathy::Client::Account> account = accountFromPath(path);
+    Telepathy::Client::AccountPtr account = accountFromPath(path);
     QString identifier = account->uniqueIdentifier();
     removeSource(identifier);
 }
 
-QSharedPointer<Telepathy::Client::Account> PresenceEngine::accountFromPath(const QString &path)
+Telepathy::Client::AccountPtr PresenceEngine::accountFromPath(const QString &path)
 {
     kDebug();
     return m_accountManager->accountForPath(path);
