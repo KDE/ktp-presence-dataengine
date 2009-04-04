@@ -1,5 +1,4 @@
 /*
- *   Copyright (C) 2008 George Goldberg <grundleborg@googlemail.com>
  *   Copyright (C) 2009 Collabora Ltd <http://www.collabora.co.uk>
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -17,44 +16,39 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef PLASMA_DATAENGINE_PRESENCE_PRESENCE_H
-#define PLASMA_DATAENGINE_PRESENCE_PRESENCE_H
+#ifndef PLASMA_DATAENGINE_PRESENCE_PRESENCESOURCE_H
+#define PLASMA_DATAENGINE_PRESENCE_PRESENCESOURCE_H
 
-#include <plasma/dataengine.h>
+#include <plasma/datacontainer.h>
 
-namespace Telepathy
-{
-    namespace Client
-    {
-        class AccountManager;
+#include <QtCore/QObject>
+
+#include <TelepathyQt4/Client/Account>
+
+namespace Telepathy {
+    namespace Client {
         class PendingOperation;
     }
 }
 
-class PresenceEngine : public Plasma::DataEngine
+class PresenceSource : public Plasma::DataContainer
 {
     Q_OBJECT
 
 public:
-    PresenceEngine(QObject * parent, const QVariantList & args);
-    ~PresenceEngine();
-
-protected:
-    void init();
-    bool sourceRequestEvent(const QString & name);
+    PresenceSource(Telepathy::Client::AccountPtr account, QObject *parent = 0);
+    ~PresenceSource();
 
 private Q_SLOTS:
-    void onAccountManagerReady(Telepathy::Client::PendingOperation *op);
-    void onAccountCreated(const QString &path);
-    void onAccountRemoved(const QString &path);
-    void onAccountValidityChanged(const QString &path, bool valid);
+    void onAccountReady(Telepathy::Client::PendingOperation *op);
+    void onAccountCurrentPresenceChanged(const Telepathy::SimplePresence &);
 
 private:
-    Telepathy::Client::AccountManager *m_accountManager;
+    QString presenceTypeToString(uint type);
+
+    Telepathy::Client::AccountPtr m_account;
 };
 
-K_EXPORT_PLASMA_DATAENGINE(presence, PresenceEngine)
 
-
-#endif // Include guard
+#endif // Header guard
 

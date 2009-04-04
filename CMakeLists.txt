@@ -18,6 +18,7 @@ include_directories(
 
 set(presence_engine_SRCS
     presence.cpp
+    presencesource.cpp
 )
 
 kde4_add_plugin(plasma_engine_presence ${presence_engine_SRCS})
