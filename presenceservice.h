@@ -16,47 +16,29 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef PLASMA_DATAENGINE_PRESENCE_PRESENCESOURCE_H
-#define PLASMA_DATAENGINE_PRESENCE_PRESENCESOURCE_H
+#ifndef PLASMA_DATAENGINE_PRESENCE_PRESENCESERVICE_H
+#define PLASMA_DATAENGINE_PRESENCE_PRESENCESERVICE_H
 
-#include <plasma/datacontainer.h>
+#include "presencesource.h"
 
-#include <QtCore/QObject>
+#include <Plasma/Service>
 
-#include <TelepathyQt4/Client/Account>
-
-namespace Plasma {
-    class Service;
-}
-
-namespace Telepathy {
-    namespace Client {
-        class PendingOperation;
-    }
-}
-
-class PresenceSource : public Plasma::DataContainer
+class PresenceService : public Plasma::Service
 {
     Q_OBJECT
 
 public:
-    PresenceSource(Telepathy::Client::AccountPtr account, QObject *parent = 0);
-    ~PresenceSource();
+    PresenceService(PresenceSource *parent);
+    ~PresenceService();
 
-    Plasma::Service * createService();
-
-    Telepathy::Client::AccountPtr account();
-
-private Q_SLOTS:
-    void onAccountReady(Telepathy::Client::PendingOperation *op);
-    void onAccountCurrentPresenceChanged(const Telepathy::SimplePresence &);
+protected:
+    Plasma::ServiceJob* createJob(const QString &operation, QMap<QString, QVariant> &parameters);
 
 private:
-    QString presenceTypeToString(uint type);
-
-    Telepathy::Client::AccountPtr m_account;
+    PresenceSource *m_source;
 };
 
 
 #endif // Header guard
+
 

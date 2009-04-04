@@ -20,7 +20,11 @@
 #ifndef PLASMA_DATAENGINE_PRESENCE_PRESENCE_H
 #define PLASMA_DATAENGINE_PRESENCE_PRESENCE_H
 
-#include <plasma/dataengine.h>
+#include <Plasma/DataEngine>
+
+namespace Plasma {
+    class Service;
+}
 
 namespace Telepathy
 {
@@ -38,6 +42,8 @@ class PresenceEngine : public Plasma::DataEngine
 public:
     PresenceEngine(QObject * parent, const QVariantList & args);
     ~PresenceEngine();
+
+    Plasma::Service * serviceForSource(const QString& name);
 
 protected:
     void init();

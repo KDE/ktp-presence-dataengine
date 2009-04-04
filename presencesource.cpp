@@ -18,6 +18,8 @@
 
 #include "presencesource.h"
 
+#include "presenceservice.h"
+
 #include <kdebug.h>
 
 #include <TelepathyQt4/Client/Feature>
@@ -51,6 +53,18 @@ PresenceSource::PresenceSource(Telepathy::Client::AccountPtr account, QObject *p
 PresenceSource::~PresenceSource()
 {
     kDebug() << "Destroying source for Account:" << objectName();
+}
+
+Plasma::Service * PresenceSource::createService()
+{
+    kDebug();   // Output the method we are in.
+
+    return new PresenceService(this);
+}
+
+Telepathy::Client::AccountPtr PresenceSource::account()
+{
+    return m_account;
 }
 
 void PresenceSource::onAccountReady(Telepathy::Client::PendingOperation *op)

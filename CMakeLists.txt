@@ -19,6 +19,8 @@ include_directories(
 set(presence_engine_SRCS
     presence.cpp
     presencesource.cpp
+    presenceservice.cpp
+    setrequestedpresencejob.cpp
 )
 
 kde4_add_plugin(plasma_engine_presence ${presence_engine_SRCS})
@@ -30,3 +32,4 @@ target_link_libraries(plasma_engine_presence
 
 install(TARGETS plasma_engine_presence DESTINATION ${PLUGIN_INSTALL_DIR})
 install(FILES plasma-dataengine-presence.desktop DESTINATION ${SERVICES_INSTALL_DIR} )
+install(FILES presence.operations DESTINATION ${DATA_INSTALL_DIR}/plasma/services)

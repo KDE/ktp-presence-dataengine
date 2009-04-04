@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE kcfg SYSTEM "http://www.kde.org/standards/kcfg/1.0/kcfg.xsd">
+<kcfg>
+    <group name="setRequestedPresence">
+        <entry name="status" type="String">
+            <label>The string identifier of the chosen presence status.</label>
+        </entry>
+        <entry name="statusMessage" type="String">
+            <label>The text which the status message should be updated to.</label>
+        </entry>
+    </group>
+</kcfg>

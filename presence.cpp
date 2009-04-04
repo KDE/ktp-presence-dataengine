@@ -23,6 +23,8 @@
 
 #include <KDebug>
 
+#include <Plasma/Service>
+
 #include <TelepathyQt4/Client/Account>
 #include <TelepathyQt4/Client/AccountManager>
 #include <TelepathyQt4/Client/Feature>
@@ -53,6 +55,25 @@ PresenceEngine::~PresenceEngine()
         delete m_accountManager;
     }
 }
+
+Plasma::Service * PresenceEngine::serviceForSource(const QString &name)
+{
+    kDebug();   // Output which method we are in.
+
+    // Get the data source and then from that, we can get the service
+    PresenceSource *source = dynamic_cast<PresenceSource*>(containerForSource(name));
+
+    if(!source)
+    {
+        kWarning() << "Service does not exist for the source with name:" << name;
+        return Plasma::DataEngine::serviceForSource(name);
+    }
+
+    Plasma::Service *service = source->createService();
+    service->setParent(this);
+    return service;
+}
+
 
 void PresenceEngine::init()
 {
