@@ -40,7 +40,7 @@ class PresenceSource : public Plasma::DataContainer
     Q_OBJECT
 
 public:
-    PresenceSource(Telepathy::Client::AccountPtr account, QObject *parent = 0);
+    explicit PresenceSource(Telepathy::Client::AccountPtr account, QObject *parent = 0);
     ~PresenceSource();
 
     Plasma::Service * createService();
