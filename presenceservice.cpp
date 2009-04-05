@@ -38,11 +38,15 @@ PresenceService::~PresenceService()
 
 Plasma::ServiceJob * PresenceService::createJob(const QString& operation, QMap<QString, QVariant>& parameters)
 {
-    if (operation == "setRequestedPresence") {
-        return new SetRequestedPresenceJob(m_source, parameters);
+    if(operation == "setPresence")
+    {
+        if(parameters.contains("status") && parameters.contains("status_message"))
+        {
+            return new SetRequestedPresenceJob(m_source, parameters);
+        }
     }
 
-    // default case is to fail:
+    // If we don't know what to do for this operation, default to failing.
     return new Plasma::ServiceJob(m_source->objectName(), operation, parameters, this);
 }
 

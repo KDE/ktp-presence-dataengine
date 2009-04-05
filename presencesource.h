@@ -19,7 +19,7 @@
 #ifndef PLASMA_DATAENGINE_PRESENCE_PRESENCESOURCE_H
 #define PLASMA_DATAENGINE_PRESENCE_PRESENCESOURCE_H
 
-#include <plasma/datacontainer.h>
+#include <Plasma/DataContainer>
 
 #include <QtCore/QObject>
 

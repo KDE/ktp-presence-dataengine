@@ -20,7 +20,7 @@
 
 #include "presenceservice.h"
 
-#include <kdebug.h>
+#include <KDebug>
 
 #include <TelepathyQt4/Client/Feature>
 #include <TelepathyQt4/Client/PendingOperation>
@@ -101,9 +101,9 @@ void PresenceSource::onAccountCurrentPresenceChanged(const Telepathy::SimplePres
     kDebug();   // Output the method we are in.
 
     // Update the data of this source
-    setData("current_presence_type", presenceTypeToString(presence.type));
-    setData("current_presence_status", presence.status);
-    setData("current_presence_status_message", presence.statusMessage);
+    setData("presence_type", presenceTypeToString(presence.type));
+    setData("presence_status", presence.status);
+    setData("presence_status_message", presence.statusMessage);
     // FIXME: Make things other than just current presence available for the source.
 
     // Required to trigger emission of update signal after changing data

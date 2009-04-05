@@ -28,12 +28,10 @@
 SetRequestedPresenceJob::SetRequestedPresenceJob(PresenceSource *source,
                                                  const QMap<QString, QVariant> &parameters,
                                                  QObject *parent)
- : Plasma::ServiceJob(source->objectName(), "setRequestedPresence", parameters, parent),
+ : Plasma::ServiceJob(source->objectName(), "setPresence", parameters, parent),
    m_account(source->account())
 {
     kDebug();   // Output the method we are in.
-
-    // FIXME: Check the parameters passed are valid here.
 }
 
 void SetRequestedPresenceJob::start()
@@ -43,7 +41,7 @@ void SetRequestedPresenceJob::start()
     // Call the appropriate method on the Account object
     Telepathy::SimplePresence rp;
     rp.status = parameters().value("status").toString();
-    rp.statusMessage = parameters().value("statusMessage").toString();
+    rp.statusMessage = parameters().value("status_message").toString();
 
     // FIXME: Will all hell break lose here if we don't set the presence type?
     // FIXME: What happens if there was a status message before, but we set without one this time. Does it stay the same?
