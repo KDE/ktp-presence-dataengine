@@ -1,19 +1,20 @@
 /*
- *   Copyright (C) 2009 Collabora Ltd <http://www.collabora.co.uk>
+ * Copyright (C) 2009 Collabora Ltd <http://www.collabora.co.uk>
+ * Copyright (C) 2009 Andre Moreira Magalhaes <andrunko@gmail.com>
  *
- *   This program is free software; you can redistribute it and/or modify
- *   it under the terms of the GNU Library General Public License version 2 as
- *   published by the Free Software Foundation
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Library General Public License version 2 as
+ * published by the Free Software Foundation
  *
- *   This program is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *   GNU Library General Public License for more details
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Library General Public License for more details
  *
- *   You should have received a copy of the GNU Library General Public
- *   License along with this program; if not, write to the
- *   Free Software Foundation, Inc.,
- *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ * You should have received a copy of the GNU Library General Public
+ * License along with this program; if not, write to the
+ * Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
 #include "presencesource.h"
@@ -22,89 +23,72 @@
 
 #include <KDebug>
 
-#include <TelepathyQt4/Client/Feature>
-#include <TelepathyQt4/Client/PendingOperation>
-#include <TelepathyQt4/Client/PendingReady>
+#include <TelepathyQt4/Account>
 #include <TelepathyQt4/Constants>
+#include <TelepathyQt4/PendingOperation>
+#include <TelepathyQt4/PendingReady>
 
-PresenceSource::PresenceSource(Telepathy::Client::AccountPtr account, QObject *parent)
- : Plasma::DataContainer(parent),
-   m_account(account)
+PresenceSource::PresenceSource(const Tp::AccountPtr &account, QObject *parent)
+    : Plasma::DataContainer(parent),
+      m_account(account)
 {
-    Q_ASSERT(m_account);
-
-    kDebug() << "Presence Source created for Account:" << account->uniqueIdentifier();
+    kDebug() << "PresenceSource created for account:" <<
+        account->uniqueIdentifier();
 
     // Set the object name (which will be the name of the source)
     setObjectName(m_account->uniqueIdentifier());
 
-    // Specify the features we want the account to become ready with
-    QSet<Telepathy::Client::Feature> features;
-    features << Telepathy::Client::Account::FeatureCore;
-    // features << Telepathy::Client::Account::FeatureAvatar;  // FIXME: Uncomment me once t-a-k supports avatars
-    features << Telepathy::Client::Account::FeatureProtocolInfo;
-
-    // Make the account become ready with the desired features.
-    connect(m_account.data()->becomeReady(features),
-            SIGNAL(finished(Telepathy::Client::PendingOperation*)),
-            this, SLOT(onAccountReady(Telepathy::Client::PendingOperation*)));
+    // Make the account become ready with the desired features
+    connect(m_account->becomeReady(Tp::Account::FeatureProtocolInfo),
+            SIGNAL(finished(Tp::PendingOperation*)),
+            SLOT(onAccountReady(Tp::PendingOperation*)));
 }
 
 PresenceSource::~PresenceSource()
 {
-    kDebug() << "Destroying source for Account:" << objectName();
 }
 
-Plasma::Service * PresenceSource::createService()
+Plasma::Service *PresenceSource::createService()
 {
-    kDebug();   // Output the method we are in.
-
     return new PresenceService(this);
 }
 
-Telepathy::Client::AccountPtr PresenceSource::account()
+Tp::AccountPtr PresenceSource::account() const
 {
     return m_account;
 }
 
-void PresenceSource::onAccountReady(Telepathy::Client::PendingOperation *op)
+void PresenceSource::onAccountReady(Tp::PendingOperation *op)
 {
-    kDebug();   // Output the method we are in.
-
-    // Check if the operation succeeded or not.
-    if(op->isError())
-    {
-        kWarning() << "Readying Account failed: " << op->errorName() << ":" << op->errorMessage();
+    // Check if the operation succeeded or not
+    if (op->isError()) {
+        kWarning() << "PresenceSource::onAccountReady: readying "
+            "Account failed:" << op->errorName() << ":" << op->errorMessage();
         return;
     }
 
-    // FIXME: Is it necessary to check that all the desired features were
-    // become-readied successfully?
-
-    // Check that the account is valid - and emit a warning otherwise
-    Q_ASSERT(m_account->isValidAccount());
-    if(!m_account->isValidAccount())
-    {
+    // Check that the account is valid
+    if (!m_account->isValidAccount()) {
+        // TODO should source be removed?
         kWarning() << "Invalid account in source:" << objectName();
+        return;
     }
 
-    connect(m_account.data(), SIGNAL(currentPresenceChanged(const Telepathy::SimplePresence &)),
-            this, SLOT(onAccountCurrentPresenceChanged(const Telepathy::SimplePresence &)));
-    // FIXME: Should we connect to signals for any other type of information than just current presence?
+    connect(m_account.data(),
+            SIGNAL(currentPresenceChanged(const Tp::SimplePresence &)),
+            SLOT(onAccountCurrentPresenceChanged(const Tp::SimplePresence &)));
 
     // Force initial setting of the current presence
     onAccountCurrentPresenceChanged(m_account->currentPresence());
 }
 
-void PresenceSource::onAccountCurrentPresenceChanged(const Telepathy::SimplePresence & presence)
+void PresenceSource::onAccountCurrentPresenceChanged(
+        const Tp::SimplePresence &presence)
 {
-    kDebug();   // Output the method we are in.
-
     // Update the data of this source
     setData("presence_type", presenceTypeToString(presence.type));
     setData("presence_status", presence.status);
     setData("presence_status_message", presence.statusMessage);
-    // FIXME: Make things other than just current presence available for the source.
 
     // Required to trigger emission of update signal after changing data
     checkForUpdate();
@@ -116,30 +100,29 @@ QString PresenceSource::presenceTypeToString(uint type)
     // struct to a string representation for data sources.
     QString ret;
 
-    switch(type)
-    {
-    case Telepathy::ConnectionPresenceTypeUnset:
+    switch (type) {
+    case Tp::ConnectionPresenceTypeUnset:
         ret = "unset";
         break;
-    case Telepathy::ConnectionPresenceTypeOffline:
+    case Tp::ConnectionPresenceTypeOffline:
         ret = "offline";
         break;
-    case Telepathy::ConnectionPresenceTypeAvailable:
+    case Tp::ConnectionPresenceTypeAvailable:
         ret = "available";
         break;
-    case Telepathy::ConnectionPresenceTypeAway:
+    case Tp::ConnectionPresenceTypeAway:
         ret = "away";
         break;
-    case Telepathy::ConnectionPresenceTypeExtendedAway:
+    case Tp::ConnectionPresenceTypeExtendedAway:
         ret = "xa";
         break;
-    case Telepathy::ConnectionPresenceTypeHidden:
+    case Tp::ConnectionPresenceTypeHidden:
         ret = "invisible";
         break;
-    case Telepathy::ConnectionPresenceTypeBusy:
+    case Tp::ConnectionPresenceTypeBusy:
         ret = "busy";
         break;
-    case Telepathy::ConnectionPresenceTypeError:
+    case Tp::ConnectionPresenceTypeError:
         ret = "error";
         break;
     default:
@@ -149,7 +132,6 @@ QString PresenceSource::presenceTypeToString(uint type)
 
     return ret;
 }
-
 
 #include "presencesource.moc"
 
