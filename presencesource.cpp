@@ -39,7 +39,8 @@ PresenceSource::PresenceSource(const Tp::AccountPtr &account, QObject *parent)
     setObjectName(m_account->uniqueIdentifier());
 
     // Make the account become ready with the desired features
-    connect(m_account->becomeReady(Tp::Account::FeatureProtocolInfo),
+    connect(m_account->becomeReady(
+            Tp::Account::FeatureProtocolInfo|Tp::Account::FeatureAvatar),
             SIGNAL(finished(Tp::PendingOperation*)),
             SLOT(onAccountReady(Tp::PendingOperation*)));
 }
@@ -83,11 +84,15 @@ void PresenceSource::onAccountReady(Tp::PendingOperation *op)
     connect(m_account.data(),
             SIGNAL(displayNameChanged(const QString &)),
             SLOT(onDisplayNameChanged(const QString &)));
+    connect(m_account.data(),
+            SIGNAL(avatarChanged(const Tp::Avatar &)),
+            SLOT(onAvatarChanged(const Tp::Avatar &)));
 
     // Force initial settings
     onAccountCurrentPresenceChanged(m_account->currentPresence());
     onNicknameChanged(m_account->nickname());
     onDisplayNameChanged(m_account->displayName());
+    onAvatarChanged(m_account->avatar());
 }
 
 void PresenceSource::onAccountCurrentPresenceChanged(
@@ -117,6 +122,16 @@ void PresenceSource::onDisplayNameChanged(
 {
     // Update the data of this source
     setData("DisplayName", displayName);
+
+    // Required to trigger emission of update signal after changing data
+    checkForUpdate();
+}
+
+void PresenceSource::onAvatarChanged(
+        const Tp::Avatar &avatar)
+{
+    // Update the data of this source
+    setData("AccountAvatar", avatar.avatarData);
 
     // Required to trigger emission of update signal after changing data
     checkForUpdate();
