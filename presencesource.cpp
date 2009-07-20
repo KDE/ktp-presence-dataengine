@@ -94,9 +94,9 @@ void PresenceSource::onAccountCurrentPresenceChanged(
         const Tp::SimplePresence &presence)
 {
     // Update the data of this source
-    setData("presence_type", presenceTypeToString(presence.type));
-    setData("presence_status", presence.status);
-    setData("presence_status_message", presence.statusMessage);
+    setData("PresenceType", presenceTypeToString(presence.type));
+    setData("PresenceStatus", presence.status);
+    setData("PresenceStatusMessage", presence.statusMessage);
 
     // Required to trigger emission of update signal after changing data
     checkForUpdate();
@@ -106,7 +106,7 @@ void PresenceSource::onNicknameChanged(
         const QString &nickname)
 {
     // Update the data of this source
-    setData("nickname", nickname);
+    setData("Nickname", nickname);
 
     // Required to trigger emission of update signal after changing data
     checkForUpdate();
