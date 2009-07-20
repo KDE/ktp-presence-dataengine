@@ -51,6 +51,7 @@ public:
 private Q_SLOTS:
     void onAccountReady(Tp::PendingOperation *op);
     void onAccountCurrentPresenceChanged(const Tp::SimplePresence &presence);
+    void onNicknameChanged(const QString &nickname);
 
 private:
     QString presenceTypeToString(uint type);
