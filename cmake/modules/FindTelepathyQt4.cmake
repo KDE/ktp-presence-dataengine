@@ -1,7 +1,7 @@
-# Try to find the Qt binding of the Telepathy library
-# TELEPATHY_QT_FOUND - system has TelepathyQt4
-# TELEPATHY_QT_INCLUDE_DIR - the TelepathyQt4 include directory
-# TELEPATHY_QT_LIBRARIES - Link these to use TelepathyQt4
+# Try to find the Qt4 binding of the Telepathy library
+# TELEPATHY_QT4_FOUND - system has TelepathyQt4
+# TELEPATHY_QT4_INCLUDE_DIR - the TelepathyQt4 include directory
+# TELEPATHY_QT4_LIBRARIES - Link these to use TelepathyQt4
 
 # Copyright (c) 2008, Allen Winter <winter@kde.org>
 # Copyright (c) 2009, Andre Moreira Magalhaes <andrunko@gmail.com>
@@ -17,7 +17,7 @@ endif(TELEPATHY_QT4_INCLUDE_DIR AND TELEPATHY_QT4_LIBRARIES)
 
 find_package(PkgConfig)
 if(PKG_CONFIG_FOUND)
-    pkg_check_modules(PC_TELEPATHY_QT4 QUIET TelepathyQt4>=0.1.7)
+    pkg_check_modules(PC_TELEPATHY_QT4 QUIET TelepathyQt4>=0.1.8)
 endif(PKG_CONFIG_FOUND)
 
 find_path(TELEPATHY_QT4_INCLUDE_DIR
