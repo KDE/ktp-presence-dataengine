@@ -80,10 +80,14 @@ void PresenceSource::onAccountReady(Tp::PendingOperation *op)
     connect(m_account.data(),
             SIGNAL(nicknameChanged(const QString &)),
             SLOT(onNicknameChanged(const QString &)));
+    connect(m_account.data(),
+            SIGNAL(displayNameChanged(const QString &)),
+            SLOT(onDisplayNameChanged(const QString &)));
 
     // Force initial settings
     onAccountCurrentPresenceChanged(m_account->currentPresence());
     onNicknameChanged(m_account->nickname());
+    onDisplayNameChanged(m_account->displayName());
 }
 
 void PresenceSource::onAccountCurrentPresenceChanged(
@@ -103,6 +107,16 @@ void PresenceSource::onNicknameChanged(
 {
     // Update the data of this source
     setData("nickname", nickname);
+
+    // Required to trigger emission of update signal after changing data
+    checkForUpdate();
+}
+
+void PresenceSource::onDisplayNameChanged(
+        const QString &displayName)
+{
+    // Update the data of this source
+    setData("DisplayName", displayName);
 
     // Required to trigger emission of update signal after changing data
     checkForUpdate();
