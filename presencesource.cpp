@@ -154,10 +154,8 @@ QString PresenceSource::presenceTypeToString(uint type)
         ret = "available";
         break;
     case Tp::ConnectionPresenceTypeAway:
-        ret = "away";
-        break;
     case Tp::ConnectionPresenceTypeExtendedAway:
-        ret = "xa";
+        ret = "away";
         break;
     case Tp::ConnectionPresenceTypeHidden:
         ret = "invisible";
