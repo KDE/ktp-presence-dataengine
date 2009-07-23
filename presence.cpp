@@ -126,12 +126,11 @@ void PresenceEngine::onAccountRemoved(const QString &path)
 {
     // Get the AccountPtr from the object path and remove the corresponding
     // source
-    Tp::AccountPtr account = m_accountManager->accountForPath(path);
-    if (sources().contains(account->uniqueIdentifier())) {
-        removeSource(account->uniqueIdentifier());
+    if (sources().contains(path)) {
+        removeSource(path);
     } else {
         kWarning() << "PresenceEngine::onAccountRemoved: source "
-            "does not exist for account:" << account->uniqueIdentifier();
+            "does not exist for account:" << path;
     }
 }
 
@@ -147,11 +146,11 @@ void PresenceEngine::onAccountValidityChanged(const QString &path, bool valid)
 
 void PresenceEngine::addAccount(const Tp::AccountPtr &account)
 {
-    if (!sources().contains(account->uniqueIdentifier())) {
+    if (!sources().contains(account->objectPath())) {
         addSource(new PresenceSource(account, this));
     } else {
         kWarning() << "PresenceEngine::addAccount: source "
-            "already exists for account:" << account->uniqueIdentifier();
+            "already exists for account:" << account->objectPath();
     }
 }
 

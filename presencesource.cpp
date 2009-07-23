@@ -33,10 +33,10 @@ PresenceSource::PresenceSource(const Tp::AccountPtr &account, QObject *parent)
       m_account(account)
 {
     kDebug() << "PresenceSource created for account:" <<
-        account->uniqueIdentifier();
+        account->objectPath();
 
     // Set the object name (which will be the name of the source)
-    setObjectName(m_account->uniqueIdentifier());
+    setObjectName(m_account->objectPath());
 
     // Make the account become ready with the desired features
     connect(m_account->becomeReady(
