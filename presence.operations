@@ -2,8 +2,8 @@
 <!DOCTYPE kcfg SYSTEM "http://www.kde.org/standards/kcfg/1.0/kcfg.xsd">
 <kcfg>
     <group name="setPresence">
-        <entry name="status" type="String">
-            <label>The string identifier of the chosen presence status.</label>
+        <entry name="type_id" type="Int">
+            <label>The identifier of the chosen presence status.</label>
         </entry>
         <entry name="status_message" type="String">
             <label>The text which the status message should be updated to.</label>

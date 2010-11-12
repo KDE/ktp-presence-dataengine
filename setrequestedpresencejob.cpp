@@ -40,9 +40,7 @@ SetRequestedPresenceJob::SetRequestedPresenceJob(PresenceSource *source,
 void SetRequestedPresenceJob::start()
 {
     // Call the appropriate method on the Account object
-    Tp::SimplePresence rp;
-    rp.status = parameters().value("status").toString();
-    rp.type = presenceStringToType(rp.status);
+    Tp::SimplePresence rp = parametersToSimplePresence(parameters());
     if (rp.type == Tp::ConnectionPresenceTypeError) {
         kWarning() << "SetRequestedPresenceJob::start: invalid presence "
             "status:" << rp.status;
@@ -67,24 +65,36 @@ void SetRequestedPresenceJob::onSetRequestedPresenceFinished(
     setResult(op->isValid());
 }
 
-uint SetRequestedPresenceJob::presenceStringToType(const QString &status)
+Tp::SimplePresence SetRequestedPresenceJob::parametersToSimplePresence(const QVariantMap& parameters)
 {
-    // This method converts a presence status to a uint representing the
-    // Telepathy presence type
-    if (status == "available") {
-        return Tp::ConnectionPresenceTypeAvailable;
-    } else if (status == "offline") {
-        return Tp::ConnectionPresenceTypeOffline;
-    } else if (status == "away") {
-        return Tp::ConnectionPresenceTypeAway;
-    } else if (status == "xa") {
-        return Tp::ConnectionPresenceTypeExtendedAway;
-    } else if (status == "invisible") {
-        return Tp::ConnectionPresenceTypeHidden;
-    } else if (status == "busy") {
-        return Tp::ConnectionPresenceTypeBusy;
+    Tp::SimplePresence rp;
+    switch (parameters["type_id"].toUInt()) {
+        case 1:
+            rp.status = "available";
+            rp.type = Tp::ConnectionPresenceTypeAvailable;
+            break;
+        case 2:
+            rp.status = "busy";
+            rp.type = Tp::ConnectionPresenceTypeBusy;
+            break;
+        case 3:
+            rp.status = "away";
+            rp.type = Tp::ConnectionPresenceTypeAway;
+            break;
+        case 4:
+            rp.status = "invisible";
+            rp.type = Tp::ConnectionPresenceTypeHidden;
+            break;
+        case 5:
+            rp.status = "offline";
+            rp.type = Tp::ConnectionPresenceTypeOffline;
+            break;
+        default:
+            rp.type = Tp::ConnectionPresenceTypeError;
+            break;
     }
-    return Tp::ConnectionPresenceTypeError;
+
+    return rp;
 }
 
 #include "setrequestedpresencejob.moc"

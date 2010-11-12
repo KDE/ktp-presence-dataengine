@@ -37,7 +37,7 @@ Plasma::ServiceJob *PresenceService::createJob(const QString &operation,
         QMap<QString, QVariant> &parameters)
 {
     if (operation == "setPresence") {
-        if (parameters.contains("status") &&
+        if (parameters.contains("type_id") &&
             parameters.contains("status_message")) {
             return new SetRequestedPresenceJob(m_source, parameters);
         }

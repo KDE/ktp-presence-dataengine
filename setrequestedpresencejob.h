@@ -44,7 +44,7 @@ private Q_SLOTS:
     void onSetRequestedPresenceFinished(Tp::PendingOperation *op);
 
 private:
-    uint presenceStringToType(const QString &status);
+    Tp::SimplePresence parametersToSimplePresence(const QVariantMap &parameters);
 
     Tp::AccountPtr m_account;
 };
