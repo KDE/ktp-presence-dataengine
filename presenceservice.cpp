@@ -42,6 +42,11 @@ Plasma::ServiceJob *PresenceService::createJob(const QString &operation,
             return new SetRequestedPresenceJob(m_source, parameters);
         }
     }
+    if (operation == "setNickname") {
+        if (parameters.contains("nickname")) {
+            return new SetNicknameJob(m_source, parameters);
+        }
+    }
 
     // If we don't know what to do for this operation, default to failing.
     return new Plasma::ServiceJob(m_source->objectName(), operation,

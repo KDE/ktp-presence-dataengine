@@ -9,4 +9,9 @@
             <label>The text which the status message should be updated to.</label>
         </entry>
     </group>
+    <group name="setNickname">
+        <entry name="nickname" type="String">
+            <label>The text which the nickname should be updated to.</label>
+        </entry>
+    </group>
 </kcfg>
