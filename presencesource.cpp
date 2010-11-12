@@ -100,6 +100,7 @@ void PresenceSource::onAccountCurrentPresenceChanged(
 {
     // Update the data of this source
     setData("PresenceType", presenceTypeToString(presence.type));
+    setData("PresenceTypeID", presenceTypeToID(presence.type));
     setData("PresenceStatus", presence.status);
     setData("PresenceStatusMessage", presence.statusMessage);
 
@@ -168,6 +169,38 @@ QString PresenceSource::presenceTypeToString(uint type)
         break;
     default:
         ret = "unknown";
+        break;
+    }
+
+    return ret;
+}
+
+uint PresenceSource::presenceTypeToID(uint type)
+{
+    uint ret;
+    switch (type) {
+    case Tp::ConnectionPresenceTypeUnset:
+        ret = 6;
+        break;
+    case Tp::ConnectionPresenceTypeOffline:
+        ret = 5;
+        break;
+    case Tp::ConnectionPresenceTypeAvailable:
+        ret = 1;
+        break;
+    case Tp::ConnectionPresenceTypeAway:
+    case Tp::ConnectionPresenceTypeExtendedAway:
+        ret = 3;
+        break;
+    case Tp::ConnectionPresenceTypeHidden:
+        ret = 4;
+        break;
+    case Tp::ConnectionPresenceTypeBusy:
+        ret = 2;
+        break;
+    case Tp::ConnectionPresenceTypeError:
+    default:
+        ret = 99;
         break;
     }
 

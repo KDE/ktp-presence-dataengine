@@ -57,6 +57,7 @@ private Q_SLOTS:
 
 private:
     QString presenceTypeToString(uint type);
+    uint presenceTypeToID(uint type);
 
     Tp::AccountPtr m_account;
 };
