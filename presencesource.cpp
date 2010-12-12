@@ -23,6 +23,7 @@
 #include "presenceservice.h"
 
 #include <KDebug>
+#include <KTemporaryFile>
 
 #include <TelepathyQt4/Account>
 #include <TelepathyQt4/Constants>
@@ -133,7 +134,25 @@ void PresenceSource::onAvatarChanged(
         const Tp::Avatar &avatar)
 {
     // Update the data of this source
-    setData("AccountAvatar", avatar.avatarData);
+    // Is the data empty?
+    if (avatar.avatarData.isEmpty()) {
+        // Set an empty string
+        setData("AccountAvatar", "");
+    } else {
+        // Create a temp file and use it to feed the engine
+        if (!m_tempAvatar.isNull()) {
+            m_tempAvatar.data()->deleteLater();
+        }
+        m_tempAvatar = new KTemporaryFile();
+        m_tempAvatar.data()->setAutoRemove(true);
+        m_tempAvatar.data()->open();
+        m_tempAvatar.data()->write(avatar.avatarData);
+        m_tempAvatar.data()->flush();
+
+        QFileInfo info(*(m_tempAvatar.data()));
+
+        setData("AccountAvatar", info.absoluteFilePath());
+    }
 
     // Required to trigger emission of update signal after changing data
     checkForUpdate();

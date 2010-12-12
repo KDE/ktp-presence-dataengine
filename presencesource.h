@@ -26,6 +26,8 @@
 
 #include <TelepathyQt4/Types>
 
+class KTemporaryFile;
+
 namespace Plasma
 {
     class Service;
@@ -60,6 +62,7 @@ private:
     uint presenceTypeToID(uint type);
 
     Tp::AccountPtr m_account;
+    QWeakPointer< KTemporaryFile > m_tempAvatar;
 };
 
 #endif
