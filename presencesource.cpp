@@ -78,8 +78,8 @@ void PresenceSource::onAccountReady(Tp::PendingOperation *op)
     }
 
     connect(m_account.data(),
-            SIGNAL(currentPresenceChanged(const Tp::SimplePresence &)),
-            SLOT(onAccountCurrentPresenceChanged(const Tp::SimplePresence &)));
+            SIGNAL(currentPresenceChanged(Tp::Presence)),
+            SLOT(onAccountCurrentPresenceChanged(Tp::Presence)));
     connect(m_account.data(),
             SIGNAL(nicknameChanged(const QString &)),
             SLOT(onNicknameChanged(const QString &)));
@@ -98,13 +98,13 @@ void PresenceSource::onAccountReady(Tp::PendingOperation *op)
 }
 
 void PresenceSource::onAccountCurrentPresenceChanged(
-        const Tp::SimplePresence &presence)
+        const Tp::Presence &presence)
 {
     // Update the data of this source
-    setData("PresenceType", presenceTypeToString(presence.type));
-    setData("PresenceTypeID", presenceTypeToID(presence.type));
-    setData("PresenceStatus", presence.status);
-    setData("PresenceStatusMessage", presence.statusMessage);
+    setData("PresenceType", presenceTypeToString(presence.type()));
+    setData("PresenceTypeID", presenceTypeToID(presence.type()));
+    setData("PresenceStatus", presence.status());
+    setData("PresenceStatusMessage", presence.statusMessage());
 
     // Required to trigger emission of update signal after changing data
     checkForUpdate();
