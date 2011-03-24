@@ -20,12 +20,14 @@ set(presence_engine_SRCS
     presence.cpp
     presencesource.cpp
     presenceservice.cpp
+    setavatarjob.cpp
     setrequestedpresencejob.cpp
 )
 
 kde4_add_plugin(plasma_engine_presence ${presence_engine_SRCS})
 target_link_libraries(plasma_engine_presence
 	${KDE4_KDECORE_LIBS}
+	${KDE4_KIO_LIBS}
 	${KDE4_PLASMA_LIBS}
 	${TELEPATHY_QT4_LIBRARIES}
 )

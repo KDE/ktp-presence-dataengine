@@ -14,4 +14,12 @@
             <label>The text which the nickname should be updated to.</label>
         </entry>
     </group>
+    <group name="setNickname">
+        <entry name="url" type="Url">
+            <label>A valid URL to the chosen Avatar.</label>
+        </entry>
+        <entry name="rawdata" type="ByteArray">
+            <label>The raw data of the Avatar image.</label>
+        </entry>
+    </group>
 </kcfg>
