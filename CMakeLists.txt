@@ -21,6 +21,7 @@ set(presence_engine_SRCS
     presencesource.cpp
     presenceservice.cpp
     setavatarjob.cpp
+    setnicknamejob.cpp
     setrequestedpresencejob.cpp
 )
 

@@ -20,6 +20,7 @@
 #include "presenceservice.h"
 
 #include "setavatarjob.h"
+#include "setnicknamejob.h"
 #include "setrequestedpresencejob.h"
 
 PresenceService::PresenceService(PresenceSource *parent)
@@ -42,8 +43,7 @@ Plasma::ServiceJob *PresenceService::createJob(const QString &operation,
             parameters.contains("status_message")) {
             return new SetRequestedPresenceJob(m_source, parameters);
         }
-    }
-    if (operation == "setNickname") {
+    } else if (operation == "setNickname") {
         if (parameters.contains("nickname")) {
             return new SetNicknameJob(m_source, parameters);
         }
