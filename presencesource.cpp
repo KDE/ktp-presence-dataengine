@@ -37,6 +37,14 @@ PresenceSource::PresenceSource(const Tp::AccountPtr &account, QObject *parent)
     kDebug() << "PresenceSource created for account:" <<
         account->objectPath();
 
+    setData("DisplayName", "");
+    setData("Nickname", "");
+    setData("AccountAvatar", "");
+    setData("PresenceType", "");
+    setData("PresenceTypeID", 0);
+    setData("PresenceStatus", "");
+    setData("PresenceStatusMessage", "");
+
     // Set the object name (which will be the name of the source)
     setObjectName(m_account->objectPath());
 
@@ -115,6 +123,7 @@ void PresenceSource::onNicknameChanged(
 {
     // Update the data of this source
     setData("Nickname", nickname);
+    qDebug() << "Nickname changed to " << nickname;
 
     // Required to trigger emission of update signal after changing data
     checkForUpdate();
@@ -125,6 +134,7 @@ void PresenceSource::onDisplayNameChanged(
 {
     // Update the data of this source
     setData("DisplayName", displayName);
+    qDebug() << "DisplayName changed to " << displayName;
 
     // Required to trigger emission of update signal after changing data
     checkForUpdate();
