@@ -1,7 +1,7 @@
 /*
- * Copyright (C) 2009-2010 Collabora Ltd <http://www.collabora.co.uk>
+ * Copyright (C) 2009-2011 Collabora Ltd <http://www.collabora.co.uk>
  * Copyright (C) 2009 Andre Moreira Magalhaes <andrunko@gmail.com>
- * Copyright (C) 2010 Dario Freddi <drf@kde.org>
+ * Copyright (C) 2010-2011 Dario Freddi <drf@kde.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Library General Public License version 2 as
@@ -49,9 +49,9 @@ PresenceSource::PresenceSource(const Tp::AccountPtr &account, QObject *parent)
     setObjectName(m_account->objectPath());
 
     // Make the account become ready with the desired features
-    connect(m_account->becomeReady(
-            Tp::Account::FeatureProtocolInfo|Tp::Account::FeatureAvatar),
+    connect(m_account->becomeReady(Tp::Account::FeatureProtocolInfo|Tp::Account::FeatureAvatar),
             SIGNAL(finished(Tp::PendingOperation*)),
+            this,
             SLOT(onAccountReady(Tp::PendingOperation*)));
 }
 
@@ -159,9 +159,7 @@ void PresenceSource::onAvatarChanged(
         m_tempAvatar.data()->write(avatar.avatarData);
         m_tempAvatar.data()->flush();
 
-        QFileInfo info(*(m_tempAvatar.data()));
-
-        setData("AccountAvatar", info.absoluteFilePath());
+        setData("AccountAvatar", m_tempAvatar.data()->fileName());
     }
 
     // Required to trigger emission of update signal after changing data
@@ -238,4 +236,3 @@ uint PresenceSource::presenceTypeToID(uint type)
 }
 
 #include "presencesource.moc"
-

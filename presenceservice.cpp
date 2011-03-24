@@ -59,4 +59,3 @@ Plasma::ServiceJob *PresenceService::createJob(const QString &operation,
 }
 
 #include "presenceservice.moc"
-

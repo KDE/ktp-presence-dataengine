@@ -47,7 +47,7 @@ Plasma::Service *PresenceEngine::serviceForSource(const QString &name)
 {
     // Get the data source and then from that, we can get the service
     PresenceSource *source =
-        dynamic_cast<PresenceSource*>(containerForSource(name));
+        qobject_cast<PresenceSource*>(containerForSource(name));
     if (!source) {
         kWarning() << "PresenceEngine::serviceForSource: service does not "
             "exist for the source with name:" << name;
@@ -68,8 +68,7 @@ void PresenceEngine::init()
     }
 
     // Construct the AccountManager
-    m_accountManager =
-        Tp::AccountManager::create(QDBusConnection::sessionBus());
+    m_accountManager = Tp::AccountManager::create(QDBusConnection::sessionBus());
     // Get te AccountManager ready
     connect(m_accountManager->becomeReady(),
             SIGNAL(finished(Tp::PendingOperation*)),
@@ -161,4 +160,3 @@ void PresenceEngine::addAccount(const Tp::AccountPtr &account)
 }
 
 #include "presence.moc"
-

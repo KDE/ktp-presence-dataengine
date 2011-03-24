@@ -18,7 +18,7 @@
         <entry name="url" type="Url">
             <label>A valid URL to the chosen Avatar.</label>
         </entry>
-        <entry name="rawdata" type="ByteArray">
+        <entry name="rawdata" type="String">
             <label>The raw data of the Avatar image.</label>
         </entry>
     </group>
