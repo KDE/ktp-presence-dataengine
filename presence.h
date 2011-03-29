@@ -51,12 +51,9 @@ protected:
 
 private Q_SLOTS:
     void onAccountManagerReady(Tp::PendingOperation *op);
-    void onAccountCreated(const QString &path);
-    void onAccountRemoved(const QString &path);
-    void onAccountValidityChanged(const QString &path, bool valid);
-
-private:
     void addAccount(const Tp::AccountPtr &account);
+    void onAccountRemoved(const QString &path = QString());
+    void onAccountValidityChanged(bool valid);
 
 private:
     Tp::AccountManagerPtr m_accountManager;

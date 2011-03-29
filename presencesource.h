@@ -24,7 +24,10 @@
 
 #include <QtCore/QObject>
 
+#include <TelepathyQt4/Presence>
 #include <TelepathyQt4/Types>
+
+class KTemporaryFile;
 
 namespace Plasma
 {
@@ -50,7 +53,7 @@ public:
 
 private Q_SLOTS:
     void onAccountReady(Tp::PendingOperation *op);
-    void onAccountCurrentPresenceChanged(const Tp::SimplePresence &presence);
+    void onAccountCurrentPresenceChanged(const Tp::Presence &presence);
     void onNicknameChanged(const QString &nickname);
     void onDisplayNameChanged(const QString &displayName);
     void onAvatarChanged(const Tp::Avatar &avatar);
@@ -60,6 +63,7 @@ private:
     uint presenceTypeToID(uint type);
 
     Tp::AccountPtr m_account;
+    QWeakPointer< KTemporaryFile > m_tempAvatar;
 };
 
 #endif

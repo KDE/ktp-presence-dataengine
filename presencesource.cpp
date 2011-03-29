@@ -1,7 +1,7 @@
 /*
- * Copyright (C) 2009-2010 Collabora Ltd <http://www.collabora.co.uk>
+ * Copyright (C) 2009-2011 Collabora Ltd <http://www.collabora.co.uk>
  * Copyright (C) 2009 Andre Moreira Magalhaes <andrunko@gmail.com>
- * Copyright (C) 2010 Dario Freddi <drf@kde.org>
+ * Copyright (C) 2010-2011 Dario Freddi <drf@kde.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Library General Public License version 2 as
@@ -23,6 +23,7 @@
 #include "presenceservice.h"
 
 #include <KDebug>
+#include <KTemporaryFile>
 
 #include <TelepathyQt4/Account>
 #include <TelepathyQt4/Constants>
@@ -36,13 +37,21 @@ PresenceSource::PresenceSource(const Tp::AccountPtr &account, QObject *parent)
     kDebug() << "PresenceSource created for account:" <<
         account->objectPath();
 
+    setData("DisplayName", "");
+    setData("Nickname", "");
+    setData("AccountAvatar", "");
+    setData("PresenceType", "");
+    setData("PresenceTypeID", 0);
+    setData("PresenceStatus", "");
+    setData("PresenceStatusMessage", "");
+
     // Set the object name (which will be the name of the source)
     setObjectName(m_account->objectPath());
 
     // Make the account become ready with the desired features
-    connect(m_account->becomeReady(
-            Tp::Account::FeatureProtocolInfo|Tp::Account::FeatureAvatar),
+    connect(m_account->becomeReady(Tp::Account::FeatureProtocolInfo|Tp::Account::FeatureAvatar),
             SIGNAL(finished(Tp::PendingOperation*)),
+            this,
             SLOT(onAccountReady(Tp::PendingOperation*)));
 }
 
@@ -77,8 +86,8 @@ void PresenceSource::onAccountReady(Tp::PendingOperation *op)
     }
 
     connect(m_account.data(),
-            SIGNAL(currentPresenceChanged(const Tp::SimplePresence &)),
-            SLOT(onAccountCurrentPresenceChanged(const Tp::SimplePresence &)));
+            SIGNAL(currentPresenceChanged(Tp::Presence)),
+            SLOT(onAccountCurrentPresenceChanged(Tp::Presence)));
     connect(m_account.data(),
             SIGNAL(nicknameChanged(const QString &)),
             SLOT(onNicknameChanged(const QString &)));
@@ -97,13 +106,13 @@ void PresenceSource::onAccountReady(Tp::PendingOperation *op)
 }
 
 void PresenceSource::onAccountCurrentPresenceChanged(
-        const Tp::SimplePresence &presence)
+        const Tp::Presence &presence)
 {
     // Update the data of this source
-    setData("PresenceType", presenceTypeToString(presence.type));
-    setData("PresenceTypeID", presenceTypeToID(presence.type));
-    setData("PresenceStatus", presence.status);
-    setData("PresenceStatusMessage", presence.statusMessage);
+    setData("PresenceType", presenceTypeToString(presence.type()));
+    setData("PresenceTypeID", presenceTypeToID(presence.type()));
+    setData("PresenceStatus", presence.status());
+    setData("PresenceStatusMessage", presence.statusMessage());
 
     // Required to trigger emission of update signal after changing data
     checkForUpdate();
@@ -114,6 +123,7 @@ void PresenceSource::onNicknameChanged(
 {
     // Update the data of this source
     setData("Nickname", nickname);
+    kDebug() << "Nickname changed to " << nickname;
 
     // Required to trigger emission of update signal after changing data
     checkForUpdate();
@@ -124,6 +134,7 @@ void PresenceSource::onDisplayNameChanged(
 {
     // Update the data of this source
     setData("DisplayName", displayName);
+    kDebug() << "DisplayName changed to " << displayName;
 
     // Required to trigger emission of update signal after changing data
     checkForUpdate();
@@ -133,7 +144,23 @@ void PresenceSource::onAvatarChanged(
         const Tp::Avatar &avatar)
 {
     // Update the data of this source
-    setData("AccountAvatar", avatar.avatarData);
+    // Is the data empty?
+    if (avatar.avatarData.isEmpty()) {
+        // Set an empty string
+        setData("AccountAvatar", "");
+    } else {
+        // Create a temp file and use it to feed the engine
+        if (!m_tempAvatar.isNull()) {
+            m_tempAvatar.data()->deleteLater();
+        }
+        m_tempAvatar = new KTemporaryFile();
+        m_tempAvatar.data()->setAutoRemove(true);
+        m_tempAvatar.data()->open();
+        m_tempAvatar.data()->write(avatar.avatarData);
+        m_tempAvatar.data()->flush();
+
+        setData("AccountAvatar", m_tempAvatar.data()->fileName());
+    }
 
     // Required to trigger emission of update signal after changing data
     checkForUpdate();
@@ -209,4 +236,3 @@ uint PresenceSource::presenceTypeToID(uint type)
 }
 
 #include "presencesource.moc"
-

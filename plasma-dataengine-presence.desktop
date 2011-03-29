@@ -22,9 +22,10 @@ Type=Service
 Icon=application-telepathy
 X-KDE-Library=plasma_engine_presence
 
-X-KDE-PluginInfo-Author=
-X-KDE-PluginInfo-Email=
+X-KDE-PluginInfo-Author=Dario Freddi
+X-KDE-PluginInfo-Email=dario.freddi@collabora.co.uk
 X-KDE-PluginInfo-Name=presence
-X-KDE-PluginInfo-Version=
+X-KDE-PluginInfo-Version=1.0
 X-KDE-PluginInfo-Website=
-X-KDE-PluginInfo-Category=
+X-KDE-PluginInfo-Category=network
+X-KDE-PluginInfo-EnabledByDefault=true

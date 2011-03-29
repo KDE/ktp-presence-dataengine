@@ -29,36 +29,6 @@
 #include <TelepathyQt4/PendingOperation>
 #include <TelepathyQt4/Types>
 
-SetNicknameJob::SetNicknameJob(PresenceSource* source,
-        const QMap< QString, QVariant >& parameters,
-        QObject* parent)
-    : Plasma::ServiceJob(source->objectName(), "setNickname", parameters, parent)
-    , m_account(source->account())
-{
-
-}
-
-void SetNicknameJob::start()
-{
-    // Call the appropriate method on the Account object
-    connect(m_account->setNickname(parameters()["nickname"].toString()),
-            SIGNAL(finished(Tp::PendingOperation*)),
-            this, SLOT(onSetNicknameFinished(Tp::PendingOperation*)));
-}
-
-void SetNicknameJob::onSetNicknameFinished(Tp::PendingOperation* op)
-{
-    setError(op->isError());
-    QString errorText;
-    errorText.append(op->errorName());
-    errorText.append(" : ");
-    errorText.append(op->errorMessage());
-    setErrorText(errorText);
-    setResult(op->isValid());
-}
-
-///////////////////
-
 SetRequestedPresenceJob::SetRequestedPresenceJob(PresenceSource *source,
         const QMap<QString, QVariant> &parameters,
         QObject *parent)
@@ -129,4 +99,3 @@ Tp::SimplePresence SetRequestedPresenceJob::parametersToSimplePresence(const QVa
 }
 
 #include "setrequestedpresencejob.moc"
-

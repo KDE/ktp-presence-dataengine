@@ -27,6 +27,7 @@
 #include <Plasma/Service>
 
 #include <TelepathyQt4/Account>
+#include <TelepathyQt4/AccountSet>
 #include <TelepathyQt4/AccountManager>
 #include <TelepathyQt4/PendingOperation>
 #include <TelepathyQt4/PendingReady>
@@ -46,7 +47,7 @@ Plasma::Service *PresenceEngine::serviceForSource(const QString &name)
 {
     // Get the data source and then from that, we can get the service
     PresenceSource *source =
-        dynamic_cast<PresenceSource*>(containerForSource(name));
+        qobject_cast<PresenceSource*>(containerForSource(name));
     if (!source) {
         kWarning() << "PresenceEngine::serviceForSource: service does not "
             "exist for the source with name:" << name;
@@ -67,24 +68,11 @@ void PresenceEngine::init()
     }
 
     // Construct the AccountManager
-    m_accountManager =
-        Tp::AccountManager::create(QDBusConnection::sessionBus());
+    m_accountManager = Tp::AccountManager::create(QDBusConnection::sessionBus());
     // Get te AccountManager ready
     connect(m_accountManager->becomeReady(),
             SIGNAL(finished(Tp::PendingOperation*)),
             SLOT(onAccountManagerReady(Tp::PendingOperation*)));
-
-    // Connect the signals from the AccountManager indicating that Accounts
-    // have changed to slots to handle these changes
-    connect(m_accountManager.data(),
-            SIGNAL(accountCreated(const QString &)),
-            SLOT(onAccountCreated(const QString &)));
-    connect(m_accountManager.data(),
-            SIGNAL(accountValidityChanged(const QString &, bool)),
-            SLOT(onAccountValidityChanged(const QString &, bool)));
-    connect(m_accountManager.data(),
-            SIGNAL(accountRemoved(const QString &)),
-            SLOT(onAccountRemoved(const QString &)));
 }
 
 bool PresenceEngine::sourceRequestEvent(const QString &name)
@@ -108,39 +96,48 @@ void PresenceEngine::onAccountManagerReady(Tp::PendingOperation *op)
     }
 
     // Get all the valid accounts from the AccountManager
-    QList<Tp::AccountPtr> accounts = m_accountManager->validAccounts();
+    Tp::AccountSetPtr accounts = m_accountManager->validAccounts();
     // Iterate over all the accounts and create a source for each of them
-    foreach (const Tp::AccountPtr &account, accounts) {
+    foreach (const Tp::AccountPtr &account, accounts->accounts()) {
         addAccount(account);
     }
-}
 
-void PresenceEngine::onAccountCreated(const QString &path)
-{
-    // Get the AccountPtr from the object path and create a source for it
-    Tp::AccountPtr account = m_accountManager->accountForPath(path);
-    addAccount(account);
+    // Connect the signals from the AccountManager indicating that Accounts
+    // have changed to slots to handle these changes
+    connect(m_accountManager.data(),
+            SIGNAL(newAccount(Tp::AccountPtr)),
+            this,
+            SLOT(addAccount(Tp::AccountPtr)));
 }
 
 void PresenceEngine::onAccountRemoved(const QString &path)
 {
-    // Get the AccountPtr from the object path and remove the corresponding
-    // source
-    if (sources().contains(path)) {
-        removeSource(path);
+    QString realPath;
+    if (path.isEmpty()) {
+        // Get the AccountPtr from the object path and remove the corresponding
+        // source
+        Tp::Account *account = qobject_cast< Tp::Account* >(sender());
+        realPath = account->objectPath();
+    } else {
+        realPath = path;
+    }
+    if (sources().contains(realPath)) {
+        removeSource(realPath);
     } else {
         kWarning() << "PresenceEngine::onAccountRemoved: source "
-            "does not exist for account:" << path;
+            "does not exist for account:" << realPath;
     }
 }
 
-void PresenceEngine::onAccountValidityChanged(const QString &path, bool valid)
+void PresenceEngine::onAccountValidityChanged(bool valid)
 {
+    Tp::Account *account = qobject_cast< Tp::Account* >(sender());
     if (valid) {
-        onAccountCreated(path);
+        Tp::AccountPtr accountPtr = m_accountManager->accountForPath(account->objectPath());
+        addAccount(accountPtr);
     }
     else {
-        onAccountRemoved(path);
+        onAccountRemoved(account->objectPath());
     }
 }
 
@@ -148,6 +145,14 @@ void PresenceEngine::addAccount(const Tp::AccountPtr &account)
 {
     if (!sources().contains(account->objectPath())) {
         addSource(new PresenceSource(account, this));
+        connect(account.data(),
+                SIGNAL(removed()),
+                this,
+                SLOT(onAccountRemoved()));
+        connect(account.data(),
+                SIGNAL(validityChanged(bool)),
+                this,
+                SLOT(onAccountValidityChanged(bool)));
     } else {
         kWarning() << "PresenceEngine::addAccount: source "
             "already exists for account:" << account->objectPath();
@@ -155,4 +160,3 @@ void PresenceEngine::addAccount(const Tp::AccountPtr &account)
 }
 
 #include "presence.moc"
-

@@ -1,7 +1,6 @@
 /*
- * Copyright (C) 2009-2010 Collabora Ltd <http://www.collabora.co.uk>
- * Copyright (C) 2009 Andre Moreira Magalhaes <andrunko@gmail.com>
- * Copyright (C) 2010 Dario Freddi <drf@kde.org>
+ * Copyright (C) 2009-2011 Collabora Ltd <http://www.collabora.co.uk>
+ * Copyright (C) 2011 Dario Freddi <drf@kde.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Library General Public License version 2 as
@@ -18,8 +17,8 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef PLASMA_DATAENGINE_PRESENCE_SETREQUESTEDPRESENCEJOB_H
-#define PLASMA_DATAENGINE_PRESENCE_SETREQUESTEDPRESENCEJOB_H
+#ifndef PLASMA_DATAENGINE_PRESENCE_SETNICKNAMEJOB_H
+#define PLASMA_DATAENGINE_PRESENCE_SETNICKNAMEJOB_H
 
 #include <Plasma/ServiceJob>
 
@@ -31,22 +30,20 @@ namespace Tp {
 
 class PresenceSource;
 
-class SetRequestedPresenceJob : public Plasma::ServiceJob
+class SetNicknameJob : public Plasma::ServiceJob
 {
     Q_OBJECT
 
 public:
-    SetRequestedPresenceJob(PresenceSource *source,
-            const QMap<QString, QVariant> &parameters,
-            QObject *parent = 0);
-    void start();
+    SetNicknameJob(PresenceSource *source,
+                const QMap< QString, QVariant >& parameters,
+                QObject* parent = 0);
+    virtual void start();
 
 private Q_SLOTS:
-    void onSetRequestedPresenceFinished(Tp::PendingOperation *op);
+    void onSetNicknameFinished(Tp::PendingOperation *op);
 
 private:
-    Tp::SimplePresence parametersToSimplePresence(const QVariantMap &parameters);
-
     Tp::AccountPtr m_account;
 };
 

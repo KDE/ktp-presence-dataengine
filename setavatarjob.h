@@ -1,7 +1,6 @@
 /*
- * Copyright (C) 2009-2010 Collabora Ltd <http://www.collabora.co.uk>
- * Copyright (C) 2009 Andre Moreira Magalhaes <andrunko@gmail.com>
- * Copyright (C) 2010 Dario Freddi <drf@kde.org>
+ * Copyright (C) 2009-2011 Collabora Ltd <http://www.collabora.co.uk>
+ * Copyright (C) 2011 Dario Freddi <drf@kde.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Library General Public License version 2 as
@@ -18,36 +17,44 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef PLASMA_DATAENGINE_PRESENCE_SETREQUESTEDPRESENCEJOB_H
-#define PLASMA_DATAENGINE_PRESENCE_SETREQUESTEDPRESENCEJOB_H
+#ifndef PLASMA_DATAENGINE_PRESENCE_SETAVATARJOB_H
+#define PLASMA_DATAENGINE_PRESENCE_SETAVATARJOB_H
 
 #include <Plasma/ServiceJob>
 
 #include <TelepathyQt4/Types>
 
+class PresenceSource;
+
+namespace KIO {
+    class Job;
+}
+
 namespace Tp {
     class PendingOperation;
 }
 
-class PresenceSource;
-
-class SetRequestedPresenceJob : public Plasma::ServiceJob
+class SetAvatarJob : public Plasma::ServiceJob
 {
     Q_OBJECT
 
 public:
-    SetRequestedPresenceJob(PresenceSource *source,
-            const QMap<QString, QVariant> &parameters,
+    SetAvatarJob(PresenceSource *source,
+            const QMap< QString, QVariant > &parameters,
             QObject *parent = 0);
-    void start();
+    virtual void start();
 
 private Q_SLOTS:
-    void onSetRequestedPresenceFinished(Tp::PendingOperation *op);
+    void onDataFromJob(KIO::Job *job, const QByteArray &data);
+    void onMimeTypeRetrieved(KIO::Job *job, const QString &mimetype);
+    void onJobFinished(KJob *job);
+    void onSetAvatarFinished(Tp::PendingOperation *op);
 
 private:
-    Tp::SimplePresence parametersToSimplePresence(const QVariantMap &parameters);
+    void populateMimeTypeAndStart();
 
     Tp::AccountPtr m_account;
+    Tp::Avatar m_avatar;
 };
 
 #endif
