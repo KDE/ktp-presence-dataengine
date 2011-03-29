@@ -14,7 +14,7 @@
             <label>The text which the nickname should be updated to.</label>
         </entry>
     </group>
-    <group name="setNickname">
+    <group name="setAvatar">
         <entry name="url" type="Url">
             <label>A valid URL to the chosen Avatar.</label>
         </entry>

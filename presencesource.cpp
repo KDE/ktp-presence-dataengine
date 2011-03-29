@@ -123,7 +123,7 @@ void PresenceSource::onNicknameChanged(
 {
     // Update the data of this source
     setData("Nickname", nickname);
-    qDebug() << "Nickname changed to " << nickname;
+    kDebug() << "Nickname changed to " << nickname;
 
     // Required to trigger emission of update signal after changing data
     checkForUpdate();
@@ -134,7 +134,7 @@ void PresenceSource::onDisplayNameChanged(
 {
     // Update the data of this source
     setData("DisplayName", displayName);
-    qDebug() << "DisplayName changed to " << displayName;
+    kDebug() << "DisplayName changed to " << displayName;
 
     // Required to trigger emission of update signal after changing data
     checkForUpdate();
