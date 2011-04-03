@@ -2,6 +2,7 @@
 Encoding=UTF-8
 Name=Presence
 Name[cs]=Přítomnost
+Name[da]=Tilstedeværelse
 Name[es]=Presencia
 Name[nds]=Anwesigkeit
 Name[nl]=Aanwezigheid
@@ -11,6 +12,7 @@ Name[sv]=Närvaro
 Name[uk]=Присутність
 Name[x-test]=xxPresencexx
 Comment=Telepathy Presence Data Engine
+Comment[da]=Datamotor til Telepathy-tilstedeværelse
 Comment[es]=Motor de datos de la presencia para Telepathy
 Comment[nds]=Telepathie-Datenkarn för de Anwesigkeit
 Comment[nl]=Aanwezigheidsgegevensengine van Telepathy
