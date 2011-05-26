@@ -40,6 +40,7 @@ PresenceSource::PresenceSource(const Tp::AccountPtr &account, QObject *parent)
     setData("DisplayName", "");
     setData("Nickname", "");
     setData("AccountAvatar", "");
+    setData("AccountIcon", account->iconName());
     setData("PresenceType", "");
     setData("PresenceTypeID", 0);
     setData("PresenceStatus", "");
