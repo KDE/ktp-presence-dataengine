@@ -42,7 +42,7 @@ SetAvatarJob::SetAvatarJob(PresenceSource *source,
 void SetAvatarJob::start()
 {
     if (parameters().contains("url")) {
-        KUrl url(parameters().value("url").toUrl());
+        KUrl url(parameters().value("url").toString());
 
         KIO::TransferJob *job = KIO::get(url);
 

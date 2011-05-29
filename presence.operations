@@ -15,7 +15,7 @@
         </entry>
     </group>
     <group name="setAvatar">
-        <entry name="url" type="Url">
+        <entry name="url" type="String">
             <label>A valid URL to the chosen Avatar.</label>
         </entry>
         <entry name="rawdata" type="String">
