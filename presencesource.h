@@ -57,6 +57,7 @@ private Q_SLOTS:
     void onNicknameChanged(const QString &nickname);
     void onDisplayNameChanged(const QString &displayName);
     void onAvatarChanged(const Tp::Avatar &avatar);
+    void onIconNameChanged(const QString &iconName);
 
 private:
     QString presenceTypeToString(uint type);

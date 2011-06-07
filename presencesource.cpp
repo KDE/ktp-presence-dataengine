@@ -40,7 +40,7 @@ PresenceSource::PresenceSource(const Tp::AccountPtr &account, QObject *parent)
     setData("DisplayName", "");
     setData("Nickname", "");
     setData("AccountAvatar", "");
-    setData("AccountIcon", account->iconName());
+    setData("AccountIcon", "");
     setData("PresenceType", "");
     setData("PresenceTypeID", 0);
     setData("PresenceStatus", "");
@@ -86,6 +86,9 @@ void PresenceSource::onAccountReady(Tp::PendingOperation *op)
         return;
     }
 
+    // set protocol icon
+    setData("AccountIcon", m_account->iconName());
+
     connect(m_account.data(),
             SIGNAL(currentPresenceChanged(Tp::Presence)),
             SLOT(onAccountCurrentPresenceChanged(Tp::Presence)));
@@ -98,6 +101,9 @@ void PresenceSource::onAccountReady(Tp::PendingOperation *op)
     connect(m_account.data(),
             SIGNAL(avatarChanged(const Tp::Avatar &)),
             SLOT(onAvatarChanged(const Tp::Avatar &)));
+    connect(m_account.data(),
+            SIGNAL(iconNameChanged(QString)),
+            SLOT(onIconNameChanged(QString)));
 
     // Force initial settings
     onAccountCurrentPresenceChanged(m_account->currentPresence());
@@ -162,6 +168,14 @@ void PresenceSource::onAvatarChanged(
 
         setData("AccountAvatar", m_tempAvatar.data()->fileName());
     }
+
+    // Required to trigger emission of update signal after changing data
+    checkForUpdate();
+}
+
+void PresenceSource::onIconNameChanged(const QString& iconName)
+{
+    setData("AccountIcon", iconName);
 
     // Required to trigger emission of update signal after changing data
     checkForUpdate();
