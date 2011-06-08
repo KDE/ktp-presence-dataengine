@@ -71,7 +71,7 @@ Tp::SimplePresence SetRequestedPresenceJob::parametersToSimplePresence(const QVa
     Tp::SimplePresence rp;
     switch (parameters["type_id"].toUInt()) {
         case 1:
-            rp.status = "available";
+            rp.status = "online";
             rp.type = Tp::ConnectionPresenceTypeAvailable;
             break;
         case 2:

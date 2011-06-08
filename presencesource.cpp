@@ -195,7 +195,7 @@ QString PresenceSource::presenceTypeToString(uint type)
         ret = "offline";
         break;
     case Tp::ConnectionPresenceTypeAvailable:
-        ret = "available";
+        ret = "online";
         break;
     case Tp::ConnectionPresenceTypeAway:
     case Tp::ConnectionPresenceTypeExtendedAway:
