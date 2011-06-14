@@ -45,6 +45,7 @@ PresenceSource::PresenceSource(const Tp::AccountPtr &account, QObject *parent)
     setData("PresenceTypeID", 0);
     setData("PresenceStatus", "");
     setData("PresenceStatusMessage", "");
+    setData("Enabled", false);
 
     // Set the object name (which will be the name of the source)
     setObjectName(m_account->objectPath());
@@ -104,12 +105,16 @@ void PresenceSource::onAccountReady(Tp::PendingOperation *op)
     connect(m_account.data(),
             SIGNAL(iconNameChanged(QString)),
             SLOT(onIconNameChanged(QString)));
+    connect(m_account.data(),
+            SIGNAL(stateChanged(bool)),
+            SLOT(onStateChanged(bool)));
 
     // Force initial settings
     onAccountCurrentPresenceChanged(m_account->currentPresence());
     onNicknameChanged(m_account->nickname());
     onDisplayNameChanged(m_account->displayName());
     onAvatarChanged(m_account->avatar());
+    onStateChanged(m_account->isEnabled());
 }
 
 void PresenceSource::onAccountCurrentPresenceChanged(
@@ -176,6 +181,14 @@ void PresenceSource::onAvatarChanged(
 void PresenceSource::onIconNameChanged(const QString& iconName)
 {
     setData("AccountIcon", iconName);
+
+    // Required to trigger emission of update signal after changing data
+    checkForUpdate();
+}
+
+void PresenceSource::onStateChanged(bool state)
+{
+    setData("Enabled", state);
 
     // Required to trigger emission of update signal after changing data
     checkForUpdate();
