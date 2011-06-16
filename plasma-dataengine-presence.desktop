@@ -14,6 +14,7 @@ Name[ug]=قەدەم تەشرىپ قىلىڭ
 Name[uk]=Присутність
 Name[x-test]=xxPresencexx
 Comment=Telepathy Presence Data Engine
+Comment[cs]=Datový nástroj přítomnosti Telepathy
 Comment[da]=Datamotor til Telepathy-tilstedeværelse
 Comment[es]=Motor de datos de la presencia para Telepathy
 Comment[et]=Telepathy kohaloleku andmete mootor
