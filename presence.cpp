@@ -37,10 +37,15 @@ PresenceEngine::PresenceEngine(QObject *parent, const QVariantList &args)
 {
     // Register custom TelepathyQt4 types
     Tp::registerTypes();
+    m_dbusExporter = new DBusExporter(this);
+    QDBusConnection::sessionBus().registerObject("/PresenceEngineActive", this, QDBusConnection::ExportAdaptors);
+    QDBusConnection::sessionBus().registerService("org.kde.Telepathy.PresenceEngineActive");
 }
 
 PresenceEngine::~PresenceEngine()
 {
+    QDBusConnection::sessionBus().unregisterObject("/PresenceEngineActive");
+    QDBusConnection::sessionBus().unregisterService("org.kde.Telepathy.PresenceEngineActive");
 }
 
 Plasma::Service *PresenceEngine::serviceForSource(const QString &name)
@@ -157,6 +162,16 @@ void PresenceEngine::addAccount(const Tp::AccountPtr &account)
         kWarning() << "PresenceEngine::addAccount: source "
             "already exists for account:" << account->objectPath();
     }
+}
+
+DBusExporter::DBusExporter(QObject* parent) : QDBusAbstractAdaptor(parent)
+{
+
+}
+
+DBusExporter::~DBusExporter()
+{
+
 }
 
 #include "presence.moc"

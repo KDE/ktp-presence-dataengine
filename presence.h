@@ -23,6 +23,8 @@
 
 #include <Plasma/DataEngine>
 
+#include <QDBusAbstractAdaptor>
+
 #include <TelepathyQt4/Types>
 
 namespace Plasma
@@ -34,6 +36,19 @@ namespace Tp
 {
     class PendingOperation;
 }
+
+class PresenceEngine;
+
+class DBusExporter : public QDBusAbstractAdaptor
+{
+    Q_OBJECT
+    Q_CLASSINFO("D-Bus Interface", "org.kde.Telepathy.PresenceEngine")
+
+public:
+    DBusExporter(QObject *parent = 0);
+    ~DBusExporter();
+};
+
 
 class PresenceEngine : public Plasma::DataEngine
 {
@@ -57,6 +72,7 @@ private Q_SLOTS:
 
 private:
     Tp::AccountManagerPtr m_accountManager;
+    DBusExporter *m_dbusExporter;
 };
 
 K_EXPORT_PLASMA_DATAENGINE(presence, PresenceEngine)
