@@ -44,7 +44,7 @@ class PresenceSource : public Plasma::DataContainer
     Q_OBJECT
 
 public:
-    PresenceSource(const Tp::AccountPtr &account, QObject *parent = 0);
+    explicit PresenceSource(const Tp::AccountPtr &account, QObject *parent = 0);
     ~PresenceSource();
 
     Plasma::Service *createService();
