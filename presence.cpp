@@ -53,17 +53,22 @@ PresenceEngine::~PresenceEngine()
 Plasma::Service *PresenceEngine::serviceForSource(const QString &name)
 {
     // Get the data source and then from that, we can get the service
-    PresenceSource *source =
-        qobject_cast<PresenceSource*>(containerForSource(name));
-    if (!source) {
+    PresenceSource *source = qobject_cast<PresenceSource*>(containerForSource(name));
+    GlobalPresenceSource *globalSource = qobject_cast<GlobalPresenceSource*>(containerForSource(name));
+
+    if (source) {
+        Plasma::Service *service = source->createService();
+        service->setParent(this);
+        return service;
+    } else if (globalSource) {
+        Plasma::Service *service = globalSource->createService();
+        service->setParent(this);
+        return service;
+    } else {
         kWarning() << "PresenceEngine::serviceForSource: service does not "
-            "exist for the source with name:" << name;
+        "exist for the source with name:" << name;
         return Plasma::DataEngine::serviceForSource(name);
     }
-
-    Plasma::Service *service = source->createService();
-    service->setParent(this);
-    return service;
 }
 
 void PresenceEngine::init()

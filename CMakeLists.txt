@@ -18,7 +18,9 @@ include_directories(
 
 set(presence_engine_SRCS
     global/global-presence.cpp
+    global/globalpresenceservice.cpp
     global/globalpresencesource.cpp
+    global/setglobalpresencejob.cpp
     presence.cpp
     presencesource.cpp
     presenceservice.cpp

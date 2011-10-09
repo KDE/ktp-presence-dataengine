@@ -16,34 +16,27 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef GLOBAL_PRESENCE_SOURCE_H
-#define GLOBAL_PRESENCE_SOURCE_H
+#ifndef PLASMA_DATAENGINE_PRESENCE_GLOBALPRESENCESERVICE_H
+#define PLASMA_DATAENGINE_PRESENCE_GLOBALPRESENCESERVICE_H
 
-#include <Plasma/DataContainer>
+#include "globalpresencesource.h"
 
-#include <TelepathyQt4/AccountManager>
+#include <Plasma/Service>
 
-class GlobalPresence;
-
-class GlobalPresenceSource : public Plasma::DataContainer
+class GlobalPresenceService : public Plasma::Service
 {
     Q_OBJECT
 
 public:
-    GlobalPresenceSource(QObject *parent = 0);
-    ~GlobalPresenceSource();
+    GlobalPresenceService(GlobalPresenceSource *parent);
+    ~GlobalPresenceService();
 
-    Plasma::Service *createService();
-    GlobalPresence *globalPresence() const;
-    void setGlobalPresenceAccountManager(const Tp::AccountManagerPtr &accountMgr);
-
-private slots:
-    void onCurrentPresenceChanged(Tp::Presence newPresence);
+protected:
+    Plasma::ServiceJob *createJob(const QString &operation, QMap<QString, QVariant> &parameters);
 
 private:
-    GlobalPresence *m_globalPresence;
+    GlobalPresenceSource *m_source;
 };
 
 
-
-#endif  // GLOBAL_PRESENCE_SOURCE_H
+#endif  // PLASMA_DATAENGINE_PRESENCE_GLOBALPRESENCESERVICE_H

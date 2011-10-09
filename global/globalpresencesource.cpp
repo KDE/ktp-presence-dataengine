@@ -16,6 +16,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#include "globalpresenceservice.h"
 #include "globalpresencesource.h"
 #include "global-presence.h"
 
@@ -33,6 +34,16 @@ GlobalPresenceSource::GlobalPresenceSource(QObject* parent)
 
 GlobalPresenceSource::~GlobalPresenceSource()
 {
+}
+
+Plasma::Service* GlobalPresenceSource::createService()
+{
+    return new GlobalPresenceService(this);
+}
+
+GlobalPresence *GlobalPresenceSource::globalPresence() const
+{
+    return m_globalPresence;
 }
 
 void GlobalPresenceSource::onCurrentPresenceChanged(Tp::Presence newPresence)

@@ -22,4 +22,9 @@
             <label>The raw data of the Avatar image.</label>
         </entry>
     </group>
+    <group name="setGlobalPresence">
+        <entry name="presence" type="String">
+            <label>The desired global presence</label>
+        </entry>
+    </group>
 </kcfg>
