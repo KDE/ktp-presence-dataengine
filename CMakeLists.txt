@@ -10,13 +10,15 @@ include(KDE4Defaults)
 add_definitions(${KDE4_DEFINITIONS})
 
 include_directories(
-	${CMAKE_CURRENT_SOURCE_DIR}
-	${CMAKE_CURRENT_BINARY_DIR}
-	${KDE4_INCLUDES}
-	${TELEPATHY_QT4_INCLUDE_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_CURRENT_BINARY_DIR}
+    ${KDE4_INCLUDES}
+    ${TELEPATHY_QT4_INCLUDE_DIR}
 )
 
 set(presence_engine_SRCS
+    global/global-presence.cpp
+    global/globalpresencesource.cpp
     presence.cpp
     presencesource.cpp
     presenceservice.cpp
@@ -27,10 +29,10 @@ set(presence_engine_SRCS
 
 kde4_add_plugin(plasma_engine_presence ${presence_engine_SRCS})
 target_link_libraries(plasma_engine_presence
-	${KDE4_KDECORE_LIBS}
-	${KDE4_KIO_LIBS}
-	${KDE4_PLASMA_LIBS}
-	${TELEPATHY_QT4_LIBRARIES}
+    ${KDE4_KDECORE_LIBS}
+    ${KDE4_KIO_LIBS}
+    ${KDE4_PLASMA_LIBS}
+    ${TELEPATHY_QT4_LIBRARIES}
 )
 
 install(TARGETS plasma_engine_presence DESTINATION ${PLUGIN_INSTALL_DIR})

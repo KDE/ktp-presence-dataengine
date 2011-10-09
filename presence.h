@@ -38,6 +38,7 @@ namespace Tp
     class PendingOperation;
 }
 
+class GlobalPresenceSource;
 class PresenceEngine;
 
 class DBusExporter : public QDBusAbstractAdaptor
@@ -74,6 +75,7 @@ private Q_SLOTS:
 private:
     Tp::AccountManagerPtr m_accountManager;
     DBusExporter *m_dbusExporter;
+    GlobalPresenceSource *m_globalPresenceSource;
 };
 
 K_EXPORT_PLASMA_DATAENGINE(presence, PresenceEngine)

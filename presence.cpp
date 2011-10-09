@@ -19,8 +19,8 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#include "global/globalpresencesource.h"
 #include "presence.h"
-
 #include "presencesource.h"
 
 #include <KDebug>
@@ -35,6 +35,7 @@
 
 PresenceEngine::PresenceEngine(QObject *parent, const QVariantList &args)
     : Plasma::DataEngine(parent, args)
+    , m_globalPresenceSource(new GlobalPresenceSource())
 {
     // Register custom TelepathyQt4 types
     Tp::registerTypes();
@@ -114,6 +115,10 @@ void PresenceEngine::onAccountManagerReady(Tp::PendingOperation *op)
             SIGNAL(newAccount(Tp::AccountPtr)),
             this,
             SLOT(addAccount(Tp::AccountPtr)));
+
+    // set account manager for the global presence object
+    m_globalPresenceSource->setGlobalPresenceAccountManager(m_accountManager);
+    addSource(m_globalPresenceSource);
 }
 
 void PresenceEngine::onAccountRemoved(const QString &path)
