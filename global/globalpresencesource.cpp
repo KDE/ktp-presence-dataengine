@@ -79,6 +79,7 @@ void GlobalPresenceSource::setGlobalPresenceAccountManager(const Tp::AccountMana
 
     m_globalPresence->setAccountManager(accountMgr);
 
-    // setup connections
+    // setup connections and initialise with current data.
     connect(m_globalPresence, SIGNAL(currentPresenceChanged(Tp::Presence)), this, SLOT(onCurrentPresenceChanged(Tp::Presence)));
+    onCurrentPresenceChanged(m_globalPresence->currentPresence());
 }
