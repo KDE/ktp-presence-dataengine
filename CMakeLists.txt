@@ -16,6 +16,17 @@ include_directories(
     ${TELEPATHY_QT4_INCLUDE_DIR}
 )
 
+#update submodule
+if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/.gitmodules)
+    execute_process(COMMAND git submodule init
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+    )
+
+    execute_process(COMMAND git submodule update
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+    )
+endif(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/.gitmodules)
+
 set(presence_engine_SRCS
     global/global-presence.cpp
     global/globalpresenceservice.cpp
