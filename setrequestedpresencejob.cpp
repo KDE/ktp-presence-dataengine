@@ -84,10 +84,14 @@ Tp::SimplePresence SetRequestedPresenceJob::parametersToSimplePresence(const QVa
             rp.type = Tp::ConnectionPresenceTypeAway;
             break;
         case 4:
+            rp.status = "xa";
+            rp.type = Tp::ConnectionPresenceTypeExtendedAway;
+            break;
+        case 5:
             rp.status = "invisible";
             rp.type = Tp::ConnectionPresenceTypeHidden;
             break;
-        case 5:
+        case 6:
             rp.status = "offline";
             rp.type = Tp::ConnectionPresenceTypeOffline;
             break;
