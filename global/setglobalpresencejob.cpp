@@ -16,7 +16,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "global-presence.h"
+#include "../common/global-presence.h"
 #include "setglobalpresencejob.h"
 
 SetGlobalPresenceJob::SetGlobalPresenceJob(GlobalPresenceSource *source, const QMap<QString, QVariant> &parameters, QObject *parent)
@@ -36,6 +36,8 @@ void SetGlobalPresenceJob::start()
         m_globalPresence->setPresence(Tp::Presence::busy());
     } else if (newPresence == "away") {
         m_globalPresence->setPresence(Tp::Presence::away());
+    } else if (newPresence == "away-extended") {
+        m_globalPresence->setPresence(Tp::Presence::xa());
     } else if (newPresence == "invisible" || newPresence == "hidden") {
         m_globalPresence->setPresence(Tp::Presence::hidden());
     } else if (newPresence == "offline") {

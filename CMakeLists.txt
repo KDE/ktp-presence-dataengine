@@ -28,7 +28,7 @@ if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/.gitmodules)
 endif(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/.gitmodules)
 
 set(presence_engine_SRCS
-    global/global-presence.cpp
+    common/global-presence.cpp
     global/globalpresenceservice.cpp
     global/globalpresencesource.cpp
     global/setglobalpresencejob.cpp
