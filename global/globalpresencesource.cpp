@@ -30,6 +30,7 @@ GlobalPresenceSource::GlobalPresenceSource(QObject* parent)
     // global presence source data
     setData("currentPresence", "");
     setData("requestedPresence", "");
+    setData("presenceMessage", "");
 }
 
 GlobalPresenceSource::~GlobalPresenceSource()
@@ -71,6 +72,8 @@ void GlobalPresenceSource::onCurrentPresenceChanged(Tp::Presence newPresence)
             setData("currentPresence", "offline");
             break;
     }
+
+    setData("presenceMessage", newPresence.statusMessage());
 }
 
 void GlobalPresenceSource::setGlobalPresenceAccountManager(const Tp::AccountManagerPtr& accountMgr)
