@@ -74,6 +74,7 @@ void GlobalPresenceSource::onCurrentPresenceChanged(Tp::Presence newPresence)
     }
 
     setData("presenceMessage", newPresence.statusMessage());
+    checkForUpdate();
 }
 
 void GlobalPresenceSource::setGlobalPresenceAccountManager(const Tp::AccountManagerPtr& accountMgr)
