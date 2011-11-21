@@ -27,20 +27,22 @@ SetGlobalPresenceJob::SetGlobalPresenceJob(GlobalPresenceSource *source, const Q
 
 void SetGlobalPresenceJob::start()
 {
-    QString newPresence = parameters()["presence"].toString();
-    newPresence.toLower();
+    QString presenceType = parameters()["presence"].toString();
+    QString presenceMessage = parameters()["presenceMessage"].toString();
 
-    if (newPresence == "online" || newPresence == "available") {
-        m_globalPresence->setPresence(Tp::Presence::available());
-    } else if (newPresence == "busy") {
-        m_globalPresence->setPresence(Tp::Presence::busy());
-    } else if (newPresence == "away") {
-        m_globalPresence->setPresence(Tp::Presence::away());
-    } else if (newPresence == "away-extended") {
-        m_globalPresence->setPresence(Tp::Presence::xa());
-    } else if (newPresence == "invisible" || newPresence == "hidden") {
+    presenceType.toLower();
+
+    if (presenceType == "online" || presenceType == "available") {
+        m_globalPresence->setPresence(Tp::Presence::available(presenceMessage));
+    } else if (presenceType == "busy") {
+        m_globalPresence->setPresence(Tp::Presence::busy(presenceMessage));
+    } else if (presenceType == "away") {
+        m_globalPresence->setPresence(Tp::Presence::away(presenceMessage));
+    } else if (presenceType == "away-extended") {
+        m_globalPresence->setPresence(Tp::Presence::xa(presenceMessage));
+    } else if (presenceType == "invisible" || presenceType == "hidden") {
         m_globalPresence->setPresence(Tp::Presence::hidden());
-    } else if (newPresence == "offline") {
+    } else if (presenceType == "offline") {
         m_globalPresence->setPresence(Tp::Presence::offline());
     } else {
         m_globalPresence->setPresence(Tp::Presence::offline());
