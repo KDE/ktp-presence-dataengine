@@ -26,5 +26,8 @@
         <entry name="presence" type="String">
             <label>The desired global presence</label>
         </entry>
+        <entry name="presenceMessage" type="String">
+            <label>The text which the status message should be updated to.</label>
+        </entry>
     </group>
 </kcfg>
