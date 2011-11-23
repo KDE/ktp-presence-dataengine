@@ -2,8 +2,10 @@ project(plasma-dataengine-presence)
 
 SET(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules" ${CMAKE_MODULE_PATH})
 
+set(IS_TELEPATHY_KDE_INTERNAL_MODULE TRUE)
 find_package(KDE4 REQUIRED)
 find_package(TelepathyQt4 REQUIRED)
+find_package(KTelepathy REQUIRED)
 
 include(KDE4Defaults)
 
@@ -14,21 +16,10 @@ include_directories(
     ${CMAKE_CURRENT_BINARY_DIR}
     ${KDE4_INCLUDES}
     ${TELEPATHY_QT4_INCLUDE_DIR}
+    ${KTELEPATHY_INCLUDE_DIR}
 )
 
-#update submodule
-if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/.gitmodules)
-    execute_process(COMMAND git submodule init
-        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-    )
-
-    execute_process(COMMAND git submodule update
-    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-    )
-endif(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/.gitmodules)
-
 set(presence_engine_SRCS
-    common/global-presence.cpp
     global/globalpresenceservice.cpp
     global/globalpresencesource.cpp
     global/setglobalpresencejob.cpp
@@ -46,6 +37,7 @@ target_link_libraries(plasma_engine_presence
     ${KDE4_KIO_LIBS}
     ${KDE4_PLASMA_LIBS}
     ${TELEPATHY_QT4_LIBRARIES}
+    ${KTELEPATHY_LIBRARIES}
 )
 
 install(TARGETS plasma_engine_presence DESTINATION ${PLUGIN_INSTALL_DIR})

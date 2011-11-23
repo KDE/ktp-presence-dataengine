@@ -25,7 +25,9 @@
 
 #include <TelepathyQt4/Types>
 
+namespace KTp {
 class GlobalPresence;
+}
 
 class SetGlobalPresenceJob : public Plasma::ServiceJob
 {
@@ -35,7 +37,7 @@ public:
     void start();
 
 private:
-    GlobalPresence *m_globalPresence;
+    KTp::GlobalPresence *m_globalPresence;
 };
 
 #endif //   PLASMA_DATAENGINE_PRESENCE_SETGLOBALPRESENCEJOB_H

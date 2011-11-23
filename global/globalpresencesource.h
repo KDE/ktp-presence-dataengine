@@ -23,7 +23,9 @@
 
 #include <TelepathyQt4/AccountManager>
 
+namespace KTp {
 class GlobalPresence;
+}
 
 class GlobalPresenceSource : public Plasma::DataContainer
 {
@@ -34,14 +36,14 @@ public:
     ~GlobalPresenceSource();
 
     Plasma::Service *createService();
-    GlobalPresence *globalPresence() const;
+    KTp::GlobalPresence *globalPresence() const;
     void setGlobalPresenceAccountManager(const Tp::AccountManagerPtr &accountMgr);
 
 private slots:
     void onCurrentPresenceChanged(Tp::Presence newPresence);
 
 private:
-    GlobalPresence *m_globalPresence;
+    KTp::GlobalPresence *m_globalPresence;
 };
 
 

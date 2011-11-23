@@ -16,13 +16,14 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "../common/global-presence.h"
 #include "globalpresenceservice.h"
 #include "globalpresencesource.h"
 
+#include <KTelepathy/global-presence.h>
+
 GlobalPresenceSource::GlobalPresenceSource(QObject* parent)
     : DataContainer(parent)
-    , m_globalPresence(new GlobalPresence(parent))
+    , m_globalPresence(new KTp::GlobalPresence(parent))
 {
     // name of the source
     setObjectName("GlobalPresence");
@@ -42,7 +43,7 @@ Plasma::Service* GlobalPresenceSource::createService()
     return new GlobalPresenceService(this);
 }
 
-GlobalPresence *GlobalPresenceSource::globalPresence() const
+KTp::GlobalPresence *GlobalPresenceSource::globalPresence() const
 {
     return m_globalPresence;
 }

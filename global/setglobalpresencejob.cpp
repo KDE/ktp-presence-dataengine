@@ -16,8 +16,9 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "../common/global-presence.h"
 #include "setglobalpresencejob.h"
+
+#include <KTelepathy/global-presence.h>
 
 SetGlobalPresenceJob::SetGlobalPresenceJob(GlobalPresenceSource *source, const QMap<QString, QVariant> &parameters, QObject *parent)
     : Plasma::ServiceJob(source->objectName(), "setGlobalPresence", parameters, parent)
