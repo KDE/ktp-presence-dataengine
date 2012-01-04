@@ -1,7 +1,17 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=Presence
+Name[hu]=Jelenlét
+Name[nl]=Aanwezigheid
+Name[pt]=Presença
+Name[sv]=Närvaro
+Name[x-test]=xxPresencexx
 Comment=Telepathy Presence Data Engine
+Comment[hu]=Telepathy jelenlét adatmodul
+Comment[nl]=Aanwezigheidsgegevensengine van Telepathy
+Comment[pt]=Motor de Dados de Presença do Telepathy
+Comment[sv]=Telepathy datagränssnitt för närvaro
+Comment[x-test]=xxTelepathy Presence Data Enginexx
 ServiceTypes=Plasma/DataEngine
 Type=Service
 Icon=application-telepathy
