@@ -1,8 +1,11 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=Presence
+Name[cs]=Přítomnost
 Name[ga]=Presence
 Name[hu]=Jelenlét
+Name[it]=Presenza
+Name[nds]=Anwesigkeit
 Name[nl]=Aanwezigheid
 Name[pt]=Presença
 Name[pt_BR]=Presença
@@ -10,8 +13,11 @@ Name[sv]=Närvaro
 Name[uk]=Присутність
 Name[x-test]=xxPresencexx
 Comment=Telepathy Presence Data Engine
+Comment[cs]=Datový nástroj přítomnosti Telepathy
 Comment[ga]=Inneall Sonraí Telepathy Presence
 Comment[hu]=Telepathy jelenlét adatmodul
+Comment[it]=Motore di dati della presenza di Telepathy
+Comment[nds]=Telepathie-Datenkarn för de Anwesigkeit
 Comment[nl]=Aanwezigheidsgegevensengine van Telepathy
 Comment[pt]=Motor de Dados de Presença do Telepathy
 Comment[pt_BR]=Mecanismo de dados de presença do Telepathy
