@@ -27,6 +27,7 @@ Name[x-test]=xxPresencexx
 Comment=Telepathy Presence Data Engine
 Comment[cs]=Datový nástroj stavu Telepathy
 Comment[da]=Datamotor til Telepathy-tilstedeværelse
+Comment[de]=Telepathy-Datenquelle für Anwesenheit
 Comment[es]=Motor de datos presenciales de Telepathy
 Comment[et]=Telepathy kohaloleku andmemootor
 Comment[fr]=Moteur de données de présence pour Telepathy
